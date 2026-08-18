@@ -101,7 +101,7 @@
             body { background-color: white; padding: 0; }
             .no-print { display: none !important; }
             .print-only { display: block !important; }
-            #proposal-tab { display: block !important; }
+            #proposal-tab { display: block !important; max-width: 100% !important; }
             .proposal-card { border: none !important; box-shadow: none !important; margin: 0 !important; padding: 0 !important; }
             .overflow-x-auto { overflow: visible !important; }
             /* Strict Print Protections for New Layout */
@@ -119,8 +119,8 @@
 <body class="min-h-screen bg-[#f4f7f9]">
 
     <!-- TOP NAVIGATION -->
-    <nav class="bg-[#1A1A1A] text-white py-2.5 px-6 no-print sticky top-0 z-50 shadow-md shrink-0 border-b border-[#333333]">
-        <div class="max-w-7xl mx-auto nav-header-wrapper">
+    <nav class="bg-[#1A1A1A] text-white py-2.5 no-print sticky top-0 z-50 shadow-md shrink-0 border-b border-[#333333]">
+        <div class="max-w-[1600px] w-full px-6 mx-auto nav-header-wrapper">
             <!-- Branding -->
             <div class="flex items-center space-x-2 shrink-0">
                 <i class="fas fa-door-open text-[#8EDB43] text-2xl"></i>
@@ -158,8 +158,8 @@
         </div>
     </nav>
 
-    <!-- TAB 1: MAIN DASHBOARD (QUOTE BUILDER) -->
-    <main id="quote-tab" class="max-w-7xl mx-auto grid grid-cols-12 gap-6 no-print p-6 items-start">
+    <!-- TAB 1: MAIN DASHBOARD (QUOTE BUILDER) WIDESCREEN UPGRADE -->
+    <main id="quote-tab" class="max-w-[1600px] w-full mx-auto grid grid-cols-12 gap-8 no-print p-6 items-start">
         
         <!-- LEFT COLUMN (CONFIGURATOR / CUSTOM FORM) -->
         <div class="col-span-8 space-y-6 pb-12">
@@ -430,11 +430,11 @@
 
         </div>
 
-        <!-- RIGHT COLUMN -->
-        <div class="col-span-4 sticky top-[80px] flex flex-col gap-4 self-start h-[calc(100vh-100px)]">
+        <!-- RIGHT COLUMN (CART DYNAMICS UPDATE) -->
+        <div class="col-span-4 sticky top-[80px] flex flex-col gap-6 self-start h-[calc(100vh-100px)]">
             
-            <!-- CURRENT ITEM CONFIGURATION SUMMARY -->
-            <div id="summary-container" class="bg-[#1A1A1A] text-white rounded-xl shadow-xl border border-[#333333] flex flex-col overflow-hidden min-h-0 flex-1">
+            <!-- CONFIGURATION SUMMARY (Auto-Shrinks to fit content) -->
+            <div id="summary-container" class="bg-[#1A1A1A] text-white rounded-xl shadow-xl border border-[#333333] flex flex-col overflow-hidden shrink-0 max-h-[60vh] transition-all duration-300">
                 
                 <div class="p-4 border-b border-[#333333] flex justify-between items-center bg-[#1A1A1A] shrink-0">
                     <h3 class="font-black text-xs uppercase tracking-widest flex items-center"><i class="fas fa-calculator mr-2 text-[#8EDB43]"></i> Configuration</h3>
@@ -535,7 +535,7 @@
                 </div>
             </div>
 
-            <!-- CART LIST & TOTALS -->
+            <!-- CART LIST & TOTALS (Auto-Expands to fill vertical void) -->
             <div id="cart-container" class="hidden bg-[#1A1A1A] text-white rounded-xl shadow-xl border border-[#333333] flex-col overflow-hidden min-h-0 flex-1">
                 
                 <div class="p-3 bg-[#1A1A1A] text-[10px] font-black tracking-widest text-slate-400 border-b border-[#333333] shrink-0 flex justify-between items-center uppercase">
@@ -595,8 +595,8 @@
         </div>
     </main>
 
-    <!-- TAB 2: CUSTOMER PROPOSAL -->
-    <main id="proposal-tab" class="max-w-4xl mx-auto p-6 hidden w-full">
+    <!-- TAB 2: CUSTOMER PROPOSAL (WIDESCREEN UPGRADE) -->
+    <main id="proposal-tab" class="max-w-[1400px] w-full mx-auto p-6 hidden">
         
         <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6 no-print">
             <div class="flex justify-between items-center mb-4">
@@ -606,7 +606,7 @@
                 <button onclick="clearQuote()" class="text-[10px] text-slate-500 hover:text-red-600 font-bold px-3 py-1.5 bg-slate-100 rounded border border-slate-200 transition-colors uppercase tracking-wider"><i class="fas fa-trash-alt mr-1"></i> Start New Quote</button>
             </div>
             
-            <div class="grid grid-cols-4 gap-4">
+            <div class="grid grid-cols-4 gap-6">
                 <div>
                     <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Customer Name</label>
                     <input type="text" id="custName" placeholder="e.g. John Doe" oninput="updateCartUI()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-semibold bg-slate-50">
@@ -684,7 +684,7 @@
     </main>
 
     <!-- TAB 3: SETTINGS & PRICING -->
-    <main id="settings-tab" class="max-w-7xl mx-auto p-6 hidden no-print w-full flex-1 overflow-y-auto">
+    <main id="settings-tab" class="max-w-[1600px] w-full mx-auto p-6 hidden no-print flex-1 overflow-y-auto">
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-12">
             <div class="flex flex-wrap justify-between items-center border-b border-slate-200 pb-4 mb-6 gap-4">
                 <div>
@@ -729,7 +729,7 @@
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Vendor Net Multiplier</label>
                             <input type="number" step="0.01" id="set-multiplier" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white">
-                            <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Applied to catalog list prices (Default: 0.48)</p>
+                            <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Applied to catalog list prices</p>
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Sales Tax Rate (%)</label>
@@ -815,9 +815,9 @@
         </div>
     </main>
 
-    <!-- NEW VISUAL BROWSER MODAL -->
+    <!-- NEW VISUAL BROWSER MODAL (WIDESCREEN UPGRADE) -->
     <div id="visualBrowserModal" class="fixed inset-0 bg-slate-900/90 z-[100] hidden flex-col justify-center items-center backdrop-blur-sm p-6 no-print">
-        <div class="bg-[#222] w-full max-w-6xl h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-[#444]">
+        <div class="bg-[#222] w-full max-w-[1600px] h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-[#444]">
             <div class="bg-[#1A1A1A] text-white p-4 flex justify-between items-center flex-shrink-0 border-b border-[#333]">
                 <h3 id="visualBrowserTitle" class="font-black text-sm uppercase tracking-widest flex items-center"><i class="fas fa-th text-[#8EDB43] mr-2"></i> Visual Browser</h3>
                 <button onclick="closeVisualBrowser()" class="text-white hover:text-red-400 transition-colors bg-[#333] px-3 py-1.5 rounded hover:bg-[#444] font-black tracking-widest uppercase text-xs border border-[#555]"><i class="fas fa-times mr-1"></i> Close</button>
@@ -876,7 +876,7 @@
         let currentlySelectedModel = null;
         let currentlySelectedSidelite = null;
         let editingIndex = null;
-        let currentBuilderMode = 'catalog'; // NEW: Tracks Master Toggle
+        let currentBuilderMode = 'catalog'; 
 
         function slugify(text) {
             if (!text) return '';
@@ -1027,7 +1027,6 @@
             document.getElementById('prop-cc-rate').innerText = appSettings.ccRate;
         }
 
-        // NEW: MASTER BUILDER TOGGLE LOGIC
         function setBuilderMode(mode) {
             currentBuilderMode = mode;
             const btnCat = document.getElementById('mode-btn-catalog');
@@ -1167,7 +1166,7 @@
                 const title = `${currentMaterial === 'wood' ? 'Solid Wood' : 'Fiberglass'} - ${currentCollection}`;
                 document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Doors: ${title}`;
                 
-                grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-2"; 
+                grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-2"; 
 
                 const models = appSettings.db[currentMaterial][currentCollection];
                 models.forEach((model, index) => {
@@ -1763,7 +1762,7 @@
                 document.getElementById('labelCostSlab').innerText = "Door Slab(s) Net:";
                 document.getElementById('preview-grid-catalog').style.display = 'flex';
                 document.getElementById('preview-custom-icon').style.display = 'none';
-                document.getElementById('summary-dim-row').style.display = 'block';
+                document.getElementById('summary-dim-row').style.display = 'flex';
                 document.getElementById('summary-sidelite-row').style.display = 'none';
                 document.getElementById('summary-addons-row').style.display = 'none';
                 document.getElementById('prehangAlert').style.display = 'none';
@@ -1966,7 +1965,7 @@
 
             document.getElementById('preview-grid-catalog').style.display = 'flex';
             document.getElementById('preview-custom-icon').style.display = 'none';
-            document.getElementById('summary-dim-row').style.display = 'block';
+            document.getElementById('summary-dim-row').style.display = 'flex';
 
             let unitStr, roStr;
             if (isSlabOnly || isBarn) {
