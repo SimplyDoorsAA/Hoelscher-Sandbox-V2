@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SimplyDoors Quoting System - Sandbox V2</title>
+    <!-- Tailwind CDN used for strict single-file architecture -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -44,7 +45,6 @@
             overflow: hidden;
             flex-shrink: 0;
         }
-        
         /* Hero Preview Box for Proposal Tab */
         .preview-hero {
             position: relative;
@@ -55,8 +55,7 @@
             background-color: #f8fafc;
             overflow: hidden;
         }
-        
-        /* Enlarged Swatch Preview Box for Proposal Tab */
+        /* Swatch Preview Box for Proposal Tab */
         .preview-swatch-large {
             position: relative;
             height: 9.5rem;
@@ -190,7 +189,17 @@
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Door Model Family</label>
-                            <button id="viewCatalogBtn" onclick="openCatalogModal()" class="text-[10px] text-slate-600 hover:text-slate-900 font-bold hidden items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider"><i class="fas fa-book-open mr-1"></i> View Catalog</button>
+                            
+                            <!-- NEW CATALOG ACTION GROUP -->
+                            <div class="flex space-x-2">
+                                <button onclick="openVisualBrowser()" class="text-[10px] text-slate-600 hover:text-[#8EDB43] hover:bg-slate-800 font-bold flex items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider">
+                                    <i class="fas fa-th mr-1"></i> Visual Browse
+                                </button>
+                                <button id="viewCatalogBtn" onclick="openCatalogModal()" class="text-[10px] text-slate-600 hover:text-slate-900 font-bold hidden items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider">
+                                    <i class="fas fa-book-open mr-1"></i> PDF
+                                </button>
+                            </div>
+
                         </div>
                         <select id="doorModel" onchange="populateOptions()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50">
                         </select>
@@ -565,7 +574,7 @@
                 </div>
             </div>
 
-            <!-- NEW BROCHURE CARDS CONTAINER (3-COLUMN SPLIT) -->
+            <!-- BROCHURE CARDS CONTAINER -->
             <div id="prop-item-list" class="space-y-8 mb-8">
                 <!-- Cards Injected Here by JS -->
             </div>
@@ -727,6 +736,21 @@
         </div>
     </main>
 
+    <!-- NEW VISUAL BROWSER MODAL -->
+    <div id="visualBrowserModal" class="fixed inset-0 bg-slate-900/90 z-[100] hidden flex-col justify-center items-center backdrop-blur-sm p-6 no-print">
+        <div class="bg-[#222] w-full max-w-6xl h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-[#444]">
+            <div class="bg-[#1A1A1A] text-white p-4 flex justify-between items-center flex-shrink-0 border-b border-[#333]">
+                <h3 id="visualBrowserTitle" class="font-black text-sm uppercase tracking-widest flex items-center"><i class="fas fa-th text-[#8EDB43] mr-2"></i> Visual Browser</h3>
+                <button onclick="closeVisualBrowser()" class="text-white hover:text-red-400 transition-colors bg-[#333] px-3 py-1.5 rounded hover:bg-[#444] font-black tracking-widest uppercase text-xs border border-[#555]"><i class="fas fa-times mr-1"></i> Close</button>
+            </div>
+            <div class="flex-1 w-full overflow-y-auto custom-scroll p-6 bg-[#1A1A1A]">
+                <div id="visualBrowserGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    <!-- Cards Injected Here by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- PDF CATALOG MODAL -->
     <div id="pdfModal" class="fixed inset-0 bg-slate-900/80 z-[100] hidden flex flex-col justify-center items-center backdrop-blur-sm p-6 no-print">
         <div class="bg-white w-full max-w-5xl h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-[#333333]">
@@ -835,6 +859,7 @@
             document.getElementById('prop-date').innerText = new Date().toISOString().split('T')[0];
             updateLaborDropdowns();
             closeCatalogModal();
+            closeVisualBrowser();
             runQuoteEngine();
         };
 
@@ -1003,6 +1028,54 @@
             document.getElementById('pdfModal').classList.add('hidden');
             document.getElementById('pdfIframe').src = ""; 
             document.body.style.overflow = 'auto'; 
+        }
+
+        // NEW VISUAL BROWSER LOGIC
+        function openVisualBrowser() {
+            document.getElementById('visualBrowserModal').classList.remove('hidden');
+            document.getElementById('visualBrowserModal').classList.add('flex');
+            document.body.style.overflow = 'hidden'; // Stop background scrolling
+            
+            const title = `${currentMaterial === 'wood' ? 'Solid Wood' : 'Fiberglass'} - ${currentCollection}`;
+            document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse: ${title}`;
+            
+            const grid = document.getElementById('visualBrowserGrid');
+            grid.innerHTML = '';
+            
+            const models = appSettings.db[currentMaterial][currentCollection];
+            const matFolder = currentMaterial === 'wood' ? 'wood' : 'fiberglass';
+            
+            models.forEach((model, index) => {
+                const safeDoorName = slugify(model.name);
+                const imgSrc = `${REPO_BASE_URL}images/${matFolder}/doors/${safeDoorName}.jpg`;
+                
+                const card = document.createElement('div');
+                card.className = "bg-[#222] border border-[#444] rounded-lg overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
+                card.onclick = () => selectFromVisualBrowser(index);
+                
+                card.innerHTML = `
+                    <div class="h-48 w-full bg-[#1A1A1A] relative flex items-center justify-center p-2">
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-[10px] uppercase tracking-widest">Image</div>
+                        <img src="${imgSrc}" class="max-h-full max-w-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
+                    </div>
+                    <div class="p-3 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors">${model.name}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function closeVisualBrowser() {
+            document.getElementById('visualBrowserModal').classList.add('hidden');
+            document.getElementById('visualBrowserModal').classList.remove('flex');
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        function selectFromVisualBrowser(index) {
+            closeVisualBrowser();
+            document.getElementById('doorModel').value = index;
+            populateOptions(); // Instantly update configurator to selected door
         }
 
         function populateModelDropdown() {
