@@ -17,8 +17,11 @@
         }
         /* SimplyDoors Official Color Adjustments */
         .material-btn.active { background-color: #8EDB43; color: #1A1A1A; border-color: #8EDB43; }
+        
         .collection-card.active { border-color: #8EDB43; background-color: #f4fbf0; }
         .collection-card.active h4 { color: #1A1A1A; }
+        .collection-card.active .browse-btn { background-color: #1A1A1A; color: #8EDB43; border-color: #1A1A1A; }
+        .collection-card:not(.active):hover .browse-btn { background-color: #e2e8f0; }
         
         .tab-btn.active { border-bottom: 3px solid #8EDB43; color: #8EDB43; }
         .tab-btn { border-bottom: 3px solid transparent; }
@@ -175,7 +178,7 @@
                 </div>
 
                 <div id="collection-grid" class="grid grid-cols-4 gap-4">
-                    <!-- Dynamic collection buttons -->
+                    <!-- Dynamic collection buttons injected here -->
                 </div>
             </section>
 
@@ -189,17 +192,10 @@
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Door Model Family</label>
-                            
-                            <!-- NEW CATALOG ACTION GROUP -->
-                            <div class="flex space-x-2">
-                                <button onclick="openVisualBrowser()" class="text-[10px] text-slate-600 hover:text-[#8EDB43] hover:bg-slate-800 font-bold flex items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider">
-                                    <i class="fas fa-th mr-1"></i> Visual Browse
-                                </button>
-                                <button id="viewCatalogBtn" onclick="openCatalogModal()" class="text-[10px] text-slate-600 hover:text-slate-900 font-bold hidden items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider">
-                                    <i class="fas fa-book-open mr-1"></i> PDF
-                                </button>
-                            </div>
-
+                            <!-- PDF Button isolated -->
+                            <button id="viewCatalogBtn" onclick="openCatalogModal()" class="text-[10px] text-slate-600 hover:text-slate-900 font-bold hidden items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider">
+                                <i class="fas fa-book-open mr-1"></i> PDF
+                            </button>
                         </div>
                         <select id="doorModel" onchange="populateOptions()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50">
                         </select>
@@ -227,13 +223,19 @@
                 </div>
                 <div class="grid grid-cols-2 gap-6">
                     <div id="glassContainer" style="display: none;">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Glass / Glazing Type</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Glass / Glazing Type</label>
+                            <button type="button" onclick="openVisualBrowser('glass')" class="text-[9px] text-slate-600 hover:text-white hover:bg-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm font-bold flex items-center transition-colors uppercase tracking-wider"><i class="fas fa-th mr-1"></i> Browse</button>
+                        </div>
                         <select id="doorGlass" onchange="runQuoteEngine()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50">
                         </select>
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Finish / Stain Color</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Finish / Stain Color</label>
+                            <button type="button" onclick="openVisualBrowser('finish')" class="text-[9px] text-slate-600 hover:text-white hover:bg-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm font-bold flex items-center transition-colors uppercase tracking-wider"><i class="fas fa-th mr-1"></i> Browse</button>
+                        </div>
                         <select id="doorFinish" onchange="runQuoteEngine()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50">
                         </select>
                     </div>
@@ -319,7 +321,10 @@
 
                 <div id="standardAddonsContainer" class="grid grid-cols-3 gap-6 mb-4">
                     <div id="addOnContainer" style="display: none;" class="col-span-2">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Decorative Grille / Speakeasy Mask</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Decorative Grille / Speakeasy Mask</label>
+                            <button type="button" onclick="openVisualBrowser('addon')" class="text-[9px] text-slate-600 hover:text-white hover:bg-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm font-bold flex items-center transition-colors uppercase tracking-wider"><i class="fas fa-th mr-1"></i> Browse</button>
+                        </div>
                         <select id="addOns" onchange="runQuoteEngine()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm bg-slate-50">
                             <option value="0">None</option>
                         </select>
@@ -614,7 +619,7 @@
                 </button>
             </div>
 
-            <!-- NEW IN-HOUSE SHOP COSTS SECTION -->
+            <!-- IN-HOUSE SHOP COSTS SECTION -->
             <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8">
                 <h3 class="font-black text-[11px] text-slate-700 uppercase tracking-widest mb-4 flex items-center"><i class="fas fa-tools text-[#8EDB43] mr-2 text-sm"></i> In-House Shop Costs (Net Parts + Labor)</h3>
                 <div class="grid grid-cols-5 gap-5">
@@ -744,7 +749,7 @@
                 <button onclick="closeVisualBrowser()" class="text-white hover:text-red-400 transition-colors bg-[#333] px-3 py-1.5 rounded hover:bg-[#444] font-black tracking-widest uppercase text-xs border border-[#555]"><i class="fas fa-times mr-1"></i> Close</button>
             </div>
             <div class="flex-1 w-full overflow-y-auto custom-scroll p-6 bg-[#1A1A1A]">
-                <div id="visualBrowserGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <div id="visualBrowserGrid" class="grid gap-6">
                     <!-- Cards Injected Here by JS -->
                 </div>
             </div>
@@ -974,16 +979,26 @@
             grid.innerHTML = '';
             
             Object.keys(appSettings.db[currentMaterial]).forEach((col, idx) => {
-                const btn = document.createElement('button');
-                btn.onclick = () => setCollection(col);
-                btn.id = 'col-' + col.replace(/\s+/g, '');
-                btn.className = 'collection-card p-4 border-2 border-slate-200 rounded-lg text-left transition-colors' + (idx === 0 ? ' active' : '');
+                const isActive = col === currentCollection;
+                
+                const card = document.createElement('div');
+                card.id = 'col-' + col.replace(/\s+/g, '');
+                card.className = 'collection-card p-4 border-2 border-slate-200 rounded-lg text-left transition-colors cursor-pointer flex flex-col justify-between ' + (isActive ? 'active' : '');
+                card.onclick = () => setCollection(col);
                 
                 let sub = currentMaterial === 'wood' ? 'Solid Hardwood' : 'Fiberglass Grain';
                 if(col === 'Barn Doors') sub = 'Native Indonesian Hardwood';
                 
-                btn.innerHTML = `<h4 class="font-bold text-sm mb-1 text-slate-800">${col}</h4><p class="text-xs font-semibold uppercase tracking-wider text-slate-500">${sub}</p>`;
-                grid.appendChild(btn);
+                card.innerHTML = `
+                    <div class="mb-3">
+                        <h4 class="font-bold text-sm mb-1 text-slate-800 transition-colors">${col}</h4>
+                        <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">${sub}</p>
+                    </div>
+                    <button onclick="event.stopPropagation(); setCollection('${col}'); openVisualBrowser('door');" class="browse-btn w-full py-2 bg-slate-100 text-slate-600 rounded text-[10px] font-black uppercase tracking-widest transition-colors border border-slate-300 shadow-sm flex items-center justify-center">
+                        <i class="fas fa-th mr-1"></i> Visual Browse
+                    </button>
+                `;
+                grid.appendChild(card);
             });
 
             currentCollection = Object.keys(appSettings.db[currentMaterial])[0];
@@ -1031,39 +1046,118 @@
         }
 
         // NEW VISUAL BROWSER LOGIC
-        function openVisualBrowser() {
+        function openVisualBrowser(type) {
             document.getElementById('visualBrowserModal').classList.remove('hidden');
             document.getElementById('visualBrowserModal').classList.add('flex');
-            document.body.style.overflow = 'hidden'; // Stop background scrolling
-            
-            const title = `${currentMaterial === 'wood' ? 'Solid Wood' : 'Fiberglass'} - ${currentCollection}`;
-            document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse: ${title}`;
+            document.body.style.overflow = 'hidden'; 
             
             const grid = document.getElementById('visualBrowserGrid');
             grid.innerHTML = '';
-            
-            const models = appSettings.db[currentMaterial][currentCollection];
             const matFolder = currentMaterial === 'wood' ? 'wood' : 'fiberglass';
             
-            models.forEach((model, index) => {
-                const safeDoorName = slugify(model.name);
-                const imgSrc = `${REPO_BASE_URL}images/${matFolder}/doors/${safeDoorName}.jpg`;
+            if (type === 'door') {
+                const title = `${currentMaterial === 'wood' ? 'Solid Wood' : 'Fiberglass'} - ${currentCollection}`;
+                document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Doors: ${title}`;
                 
-                const card = document.createElement('div');
-                card.className = "bg-[#222] border border-[#444] rounded-lg overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
-                card.onclick = () => selectFromVisualBrowser(index);
+                // Scale up the doors! Changed from 5 columns to 3 or 4, drastically increased height.
+                grid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"; 
+
+                const models = appSettings.db[currentMaterial][currentCollection];
+                models.forEach((model, index) => {
+                    const safeDoorName = slugify(model.name);
+                    const imgSrc = `${REPO_BASE_URL}images/${matFolder}/doors/${safeDoorName}.jpg`;
+                    
+                    const card = document.createElement('div');
+                    card.className = "bg-[#222] border border-[#444] rounded-xl overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
+                    card.onclick = () => { selectFromVisualBrowser('door', index); };
+                    
+                    card.innerHTML = `
+                        <div class="h-72 w-full bg-[#1A1A1A] relative flex items-center justify-center p-4">
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest">Image</div>
+                            <img src="${imgSrc}" class="max-h-full max-w-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
+                        </div>
+                        <div class="p-4 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
+                            <p class="text-xs font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors leading-snug">${model.name}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } else if (type === 'glass') {
+                document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Glass & Glazing`;
+                grid.className = "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6";
                 
-                card.innerHTML = `
-                    <div class="h-48 w-full bg-[#1A1A1A] relative flex items-center justify-center p-2">
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-[10px] uppercase tracking-widest">Image</div>
-                        <img src="${imgSrc}" class="max-h-full max-w-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
-                    </div>
-                    <div class="p-3 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
-                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors">${model.name}</p>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+                const glassSelect = document.getElementById('doorGlass');
+                Array.from(glassSelect.options).forEach((opt) => {
+                    const glassName = opt.value;
+                    const safeGlassName = slugify(glassName);
+                    const imgSrc = glassName === 'Solid Panel' ? '' : `${REPO_BASE_URL}images/${matFolder}/glass/${safeGlassName}.jpg`;
+                    
+                    const card = document.createElement('div');
+                    card.className = "bg-[#222] border border-[#444] rounded-xl overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
+                    card.onclick = () => { selectFromVisualBrowser('glass', glassName); };
+                    
+                    card.innerHTML = `
+                        <div class="h-48 w-full bg-[#1A1A1A] relative flex items-center justify-center p-4">
+                            ${glassName === 'Solid Panel' ? '<i class="fas fa-ban text-4xl text-slate-600"></i>' : `<div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-[10px] uppercase tracking-widest">Image</div><img src="${imgSrc}" class="max-h-full max-w-full object-cover relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">`}
+                        </div>
+                        <div class="p-3 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors">${glassName}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } else if (type === 'finish') {
+                document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Finish & Stains`;
+                grid.className = "grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6";
+                
+                const finishSelect = document.getElementById('doorFinish');
+                Array.from(finishSelect.options).forEach((opt) => {
+                    const finishName = opt.value;
+                    const isUnfinished = finishName.includes('Unfinished');
+                    const finishParts = finishName.split('-');
+                    const safeFinishName = slugify(finishParts.length > 1 ? finishParts[1].trim() : finishName);
+                    const imgSrc = isUnfinished ? '' : `${REPO_BASE_URL}images/${matFolder}/finishes/${safeFinishName}.jpg`;
+                    
+                    const card = document.createElement('div');
+                    card.className = "bg-[#222] border border-[#444] rounded-xl overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
+                    card.onclick = () => { selectFromVisualBrowser('finish', finishName); };
+                    
+                    card.innerHTML = `
+                        <div class="h-48 w-full bg-[#1A1A1A] relative flex items-center justify-center p-4">
+                            ${isUnfinished ? '<i class="fas fa-paint-roller text-4xl text-slate-600"></i>' : `<div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-[10px] uppercase tracking-widest">Image</div><img src="${imgSrc}" class="max-h-full max-w-full object-cover relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">`}
+                        </div>
+                        <div class="p-3 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors">${finishName}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } else if (type === 'addon') {
+                document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Add-ons`;
+                grid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6";
+                
+                const addonSelect = document.getElementById('addOns');
+                Array.from(addonSelect.options).forEach((opt) => {
+                    const addonVal = opt.value;
+                    const addonText = opt.text.split(' (+')[0];
+                    const safeAddonName = slugify(addonText);
+                    const imgSrc = addonVal === '0' ? '' : `${REPO_BASE_URL}images/${matFolder}/addons/${safeAddonName}.jpg`;
+                    
+                    const card = document.createElement('div');
+                    card.className = "bg-[#222] border border-[#444] rounded-xl overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
+                    card.onclick = () => { selectFromVisualBrowser('addon', addonVal); };
+                    
+                    card.innerHTML = `
+                        <div class="h-64 w-full bg-[#1A1A1A] relative flex items-center justify-center p-4">
+                            ${addonVal === '0' ? '<i class="fas fa-ban text-4xl text-slate-600"></i>' : `<div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-[10px] uppercase tracking-widest">Image</div><img src="${imgSrc}" class="max-h-full max-w-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">`}
+                        </div>
+                        <div class="p-3 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors leading-snug">${addonText}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
         }
 
         function closeVisualBrowser() {
@@ -1072,10 +1166,21 @@
             document.body.style.overflow = 'auto'; // Restore scrolling
         }
 
-        function selectFromVisualBrowser(index) {
+        function selectFromVisualBrowser(type, value) {
             closeVisualBrowser();
-            document.getElementById('doorModel').value = index;
-            populateOptions(); // Instantly update configurator to selected door
+            if (type === 'door') {
+                document.getElementById('doorModel').value = value;
+                populateOptions();
+            } else if (type === 'glass') {
+                document.getElementById('doorGlass').value = value;
+                runQuoteEngine();
+            } else if (type === 'finish') {
+                document.getElementById('doorFinish').value = value;
+                runQuoteEngine();
+            } else if (type === 'addon') {
+                document.getElementById('addOns').value = value;
+                runQuoteEngine();
+            }
         }
 
         function populateModelDropdown() {
