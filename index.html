@@ -137,8 +137,18 @@
                 <button onclick="switchTab('settings-tab')" id="nav-settings" class="tab-btn pb-3 px-2 text-slate-400 hover:text-white transition-colors uppercase tracking-wider text-xs"><i class="fas fa-sliders-h mr-1"></i> Settings & Pricing</button>
             </div>
 
-            <!-- Rep & Print Action Group -->
+            <!-- Rep & Save/Load Action Group -->
             <div class="flex items-center space-x-4 shrink-0">
+                
+                <!-- NEW: LOAD QUOTE DROPDOWN -->
+                <div class="flex items-center bg-[#222222] rounded px-2.5 py-1 border border-[#333333]">
+                    <i class="fas fa-folder-open text-blue-400 mr-2 text-sm"></i>
+                    <span class="text-xs text-slate-400 mr-2 shrink-0 uppercase tracking-widest font-bold">Load:</span>
+                    <select id="loadQuoteSelect" class="bg-transparent text-sm font-semibold outline-none cursor-pointer text-white truncate max-w-[150px]" onchange="handleLoadQuote(this.value)">
+                        <option value="" disabled selected>Saved Quotes...</option>
+                    </select>
+                </div>
+
                 <div class="flex items-center bg-[#222222] rounded px-2.5 py-1 border border-[#333333]">
                     <i class="fas fa-user-circle text-slate-400 mr-2 text-sm"></i>
                     <span class="text-xs text-slate-400 mr-2 shrink-0 uppercase tracking-widest font-bold">Rep:</span>
@@ -158,10 +168,10 @@
         </div>
     </nav>
 
-    <!-- TAB 1: MAIN DASHBOARD (QUOTE BUILDER) WIDESCREEN UPGRADE -->
+    <!-- TAB 1: MAIN DASHBOARD (QUOTE BUILDER) -->
     <main id="quote-tab" class="max-w-[1600px] w-full mx-auto grid grid-cols-12 gap-8 no-print p-6 items-start">
         
-        <!-- LEFT COLUMN (CONFIGURATOR / CUSTOM FORM) -->
+        <!-- LEFT COLUMN -->
         <div class="col-span-8 space-y-6 pb-12">
             
             <!-- MASTER BUILDER TOGGLE -->
@@ -178,7 +188,7 @@
             <!-- BUILDER MODE: STANDARD CATALOG                 -->
             <!-- ============================================== -->
             <div id="builder-catalog" class="space-y-6">
-                <!-- 1. Material & Collection Toggle -->
+                <!-- 1. Material & Collection -->
                 <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                     <div class="flex items-center mb-5">
                         <span class="bg-[#8EDB43] text-[#1A1A1A] w-6 h-6 rounded-full flex items-center justify-center text-xs font-black mr-3">1</span>
@@ -433,7 +443,7 @@
         <!-- RIGHT COLUMN (CART DYNAMICS UPDATE) -->
         <div class="col-span-4 sticky top-[80px] flex flex-col gap-6 self-start h-[calc(100vh-100px)]">
             
-            <!-- CONFIGURATION SUMMARY (Auto-Shrinks to fit content) -->
+            <!-- CONFIGURATION SUMMARY -->
             <div id="summary-container" class="bg-[#1A1A1A] text-white rounded-xl shadow-xl border border-[#333333] flex flex-col overflow-hidden shrink-0 max-h-[60vh] transition-all duration-300">
                 
                 <div class="p-4 border-b border-[#333333] flex justify-between items-center bg-[#1A1A1A] shrink-0">
@@ -535,7 +545,7 @@
                 </div>
             </div>
 
-            <!-- CART LIST & TOTALS (Auto-Expands to fill vertical void) -->
+            <!-- CART LIST & TOTALS -->
             <div id="cart-container" class="hidden bg-[#1A1A1A] text-white rounded-xl shadow-xl border border-[#333333] flex-col overflow-hidden min-h-0 flex-1">
                 
                 <div class="p-3 bg-[#1A1A1A] text-[10px] font-black tracking-widest text-slate-400 border-b border-[#333333] shrink-0 flex justify-between items-center uppercase">
@@ -582,20 +592,25 @@
                         <span class="text-2xl font-black text-[#8EDB43] tracking-tight" id="grandTotalRetail">$0.00</span>
                     </div>
                     
+                    <!-- UPDATED: SAVE & LOAD CART BUTTONS -->
                     <div class="flex gap-2">
-                        <button onclick="clearQuote()" class="w-1/3 bg-transparent hover:bg-[#333333] text-slate-400 hover:text-white py-2.5 rounded text-[10px] uppercase tracking-widest font-black transition-colors border border-[#444444]">
-                            <i class="fas fa-trash-alt mr-1"></i> Clear
+                        <button onclick="clearQuote()" class="w-1/4 bg-transparent hover:bg-[#333333] text-slate-400 hover:text-white py-2.5 rounded text-[9px] uppercase tracking-widest font-black transition-colors border border-[#444444]" title="Clear Cart">
+                            <i class="fas fa-trash-alt"></i>
                         </button>
-                        <button onclick="switchTab('proposal-tab')" class="w-2/3 bg-[#8EDB43] hover:bg-[#7bc236] text-[#1A1A1A] py-2.5 rounded text-xs uppercase tracking-widest font-black transition-colors">
+                        <button onclick="saveCurrentQuote()" class="w-1/4 bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded text-[9px] uppercase tracking-widest font-black transition-colors shadow-sm" title="Save Quote">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <button onclick="switchTab('proposal-tab')" class="w-1/2 bg-[#8EDB43] hover:bg-[#7bc236] text-[#1A1A1A] py-2.5 rounded text-[10px] uppercase tracking-widest font-black transition-colors shadow-sm">
                             <i class="fas fa-file-invoice mr-1"></i> Proposal
                         </button>
                     </div>
+
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- TAB 2: CUSTOMER PROPOSAL (WIDESCREEN UPGRADE) -->
+    <!-- TAB 2: CUSTOMER PROPOSAL -->
     <main id="proposal-tab" class="max-w-[1400px] w-full mx-auto p-6 hidden">
         
         <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6 no-print">
@@ -729,7 +744,7 @@
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Vendor Net Multiplier</label>
                             <input type="number" step="0.01" id="set-multiplier" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white">
-                            <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Applied to catalog list prices</p>
+                            <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Applied to catalog list prices (Default: 0.48)</p>
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Sales Tax Rate (%)</label>
@@ -812,10 +827,30 @@
                 <p class="text-[9px] text-slate-400 mt-2 font-bold uppercase tracking-widest">*All values entered above represent Hoelscher's gross List Price. The Global Vendor Multiplier will automatically be applied.</p>
             </div>
             
+            <!-- NEW: MANAGE SAVED QUOTES DASHBOARD -->
+            <div class="border-t border-slate-200 pt-8 mt-8">
+                <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center"><i class="fas fa-folder-open text-[#8EDB43] mr-2"></i> Manage Saved Quotes</h3>
+                <div class="bg-slate-50 border border-slate-200 rounded-lg overflow-hidden">
+                     <table class="w-full text-sm text-left border-collapse">
+                         <thead class="bg-[#1A1A1A] text-slate-300 text-[10px] font-black uppercase tracking-widest border-b border-[#333333]">
+                             <tr>
+                                 <th class="p-3 border-r border-[#333333]">Quote / Job Name</th>
+                                 <th class="p-3 border-r border-[#333333]">Date Saved</th>
+                                 <th class="p-3 border-r border-[#333333] text-center">Items</th>
+                                 <th class="p-3 text-center">Action</th>
+                             </tr>
+                         </thead>
+                         <tbody id="settingsQuotesBody" class="bg-white">
+                             <!-- Saved Quotes Injected Here -->
+                         </tbody>
+                     </table>
+                </div>
+            </div>
+            
         </div>
     </main>
 
-    <!-- NEW VISUAL BROWSER MODAL (WIDESCREEN UPGRADE) -->
+    <!-- VISUAL BROWSER MODAL -->
     <div id="visualBrowserModal" class="fixed inset-0 bg-slate-900/90 z-[100] hidden flex-col justify-center items-center backdrop-blur-sm p-6 no-print">
         <div class="bg-[#222] w-full max-w-[1600px] h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-[#444]">
             <div class="bg-[#1A1A1A] text-white p-4 flex justify-between items-center flex-shrink-0 border-b border-[#333]">
@@ -867,10 +902,12 @@
             labor: { std: 450, sl: 650, dbl: 800 },
             addons: { maskList: 207, grilleList: 440 },
             prehang: { sgl68: 125, sgl80: 150, dbl68: 320, dbl80: 340, jambWide: 10 },
-            db: null // Populated by database.js
+            db: null
         };
 
         let quoteItems = [];
+        let savedQuotes = {}; // NEW: Holds all saved quotes
+        
         let currentMaterial = 'fiberglass';
         let currentCollection = 'Mahogany';
         let currentlySelectedModel = null;
@@ -928,9 +965,10 @@
         }
 
         window.onload = () => {
-            appSettings.db = defaultDBJSON; // Initialize from database.js
+            appSettings.db = defaultDBJSON; 
             loadSettings();
             applyPricingPatches(appSettings.db); 
+            loadSavedQuotesFromStorage(); // Initialize save/load engine
 
             document.getElementById('systemLayout').value = 'Slab Only';
             document.getElementById('doorHanding').value = 'N/A (Slab)';
@@ -943,6 +981,159 @@
             closeVisualBrowser();
             runQuoteEngine();
         };
+
+        // ==========================================
+        // NEW: SAVE / LOAD QUOTE LOGIC
+        // ==========================================
+        function loadSavedQuotesFromStorage() {
+            const stored = localStorage.getItem('simplyDoorsSavedQuotes');
+            if (stored) {
+                try {
+                    savedQuotes = JSON.parse(stored);
+                } catch(e) {
+                    savedQuotes = {};
+                }
+            }
+            updateLoadQuoteDropdown();
+            renderSettingsSavedQuotes();
+        }
+
+        function saveCurrentQuote() {
+            if (quoteItems.length === 0) {
+                showToast("Cart is empty! Build a door first.", true);
+                return;
+            }
+            
+            let qNum = document.getElementById('quoteNumber').value.trim();
+            let cName = document.getElementById('custName').value.trim();
+            
+            if (!qNum) {
+                if (!cName) {
+                    showToast("Please enter a Quote # or Customer Name in the Proposal tab first.", true);
+                    switchTab('proposal-tab');
+                    document.getElementById('custName').focus();
+                    return;
+                }
+                qNum = cName + ' - ' + new Date().toISOString().split('T')[0];
+                document.getElementById('quoteNumber').value = qNum;
+            }
+            
+            savedQuotes[qNum] = {
+                timestamp: Date.now(),
+                quoteNumber: qNum,
+                custName: cName,
+                custPhone: document.getElementById('custPhone').value,
+                custAddress: document.getElementById('custAddress').value,
+                items: JSON.parse(JSON.stringify(quoteItems)), 
+                settings: {
+                    discountType: document.getElementById('discountType').value,
+                    discountValue: document.getElementById('discountValue').value,
+                    applyTax: document.getElementById('applyTax').checked,
+                    applyCC: document.getElementById('applyCC').checked,
+                    ccRateInput: document.getElementById('ccRateInput').value
+                }
+            };
+            
+            try {
+                localStorage.setItem('simplyDoorsSavedQuotes', JSON.stringify(savedQuotes));
+                updateLoadQuoteDropdown();
+                renderSettingsSavedQuotes();
+                showToast("Quote Saved Successfully!");
+            } catch(e) {
+                showToast("Storage Error. Clear Browser Cache.", true);
+            }
+        }
+
+        function updateLoadQuoteDropdown() {
+            const select = document.getElementById('loadQuoteSelect');
+            select.innerHTML = '<option value="" disabled selected>Saved Quotes...</option>';
+            
+            const keys = Object.keys(savedQuotes).sort((a,b) => savedQuotes[b].timestamp - savedQuotes[a].timestamp);
+            keys.forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k;
+                opt.className = "bg-[#1A1A1A] text-white";
+                const name = savedQuotes[k].custName || 'Unnamed';
+                opt.innerText = `${k} (${savedQuotes[k].items.length} items) - ${name}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function handleLoadQuote(val) {
+            if(!val) return;
+            if(quoteItems.length > 0) {
+                if(!confirm("Loading this quote will overwrite your current cart. Continue?")) {
+                    document.getElementById('loadQuoteSelect').selectedIndex = 0;
+                    return;
+                }
+            }
+            
+            const q = savedQuotes[val];
+            if(!q) return;
+            
+            document.getElementById('quoteNumber').value = q.quoteNumber || '';
+            document.getElementById('custName').value = q.custName || '';
+            document.getElementById('custPhone').value = q.custPhone || '';
+            document.getElementById('custAddress').value = q.custAddress || '';
+            
+            if(q.settings) {
+                document.getElementById('discountType').value = q.settings.discountType || 'none';
+                document.getElementById('discountValue').value = q.settings.discountValue || '';
+                document.getElementById('applyTax').checked = q.settings.applyTax !== false;
+                document.getElementById('applyCC').checked = q.settings.applyCC === true;
+                document.getElementById('ccRateInput').value = q.settings.ccRateInput || appSettings.ccRate;
+            }
+            
+            quoteItems = JSON.parse(JSON.stringify(q.items || []));
+            cancelEditMode();
+            updateCartUI();
+            
+            document.getElementById('loadQuoteSelect').selectedIndex = 0; // Reset Dropdown
+            showToast("Quote Loaded!");
+        }
+
+        function renderSettingsSavedQuotes() {
+            const tbody = document.getElementById('settingsQuotesBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            const keys = Object.keys(savedQuotes).sort((a,b) => savedQuotes[b].timestamp - savedQuotes[a].timestamp);
+            
+            if (keys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500 font-bold text-xs uppercase tracking-widest">No saved quotes found.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(k => {
+                const q = savedQuotes[k];
+                const dateStr = new Date(q.timestamp).toLocaleString();
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 hover:bg-slate-50";
+                tr.innerHTML = `
+                    <td class="p-3 border-r border-slate-100 font-bold text-slate-700">${k}</td>
+                    <td class="p-3 border-r border-slate-100 text-slate-500 text-xs">${dateStr}</td>
+                    <td class="p-3 border-r border-slate-100 text-center font-mono font-semibold">${q.items.length}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="handleLoadQuote('${k}')" class="text-blue-500 hover:text-blue-700 font-bold text-[10px] uppercase tracking-widest mr-3"><i class="fas fa-folder-open mr-1"></i> Load</button>
+                        <button onclick="deleteSavedQuote('${k}')" class="text-red-400 hover:text-red-600 font-bold text-[10px] uppercase tracking-widest"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteSavedQuote(key) {
+            if(!confirm(`Are you sure you want to completely delete the quote for: ${key}?`)) return;
+            delete savedQuotes[key];
+            localStorage.setItem('simplyDoorsSavedQuotes', JSON.stringify(savedQuotes));
+            renderSettingsSavedQuotes();
+            updateLoadQuoteDropdown();
+            showToast("Quote Deleted!");
+        }
+
+        // ==========================================
+        // SETTINGS & CORE LOGIC
+        // ==========================================
 
         function loadSettings() {
             const saved = localStorage.getItem('simplyDoorsPricingDB_v2');
@@ -995,36 +1186,6 @@
             
             runQuoteEngine();
             updateCartUI();
-        }
-
-        function showToast(msg, isError = false) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            toast.querySelector('i').className = isError ? 'fas fa-exclamation-triangle text-red-400 mr-2' : 'fas fa-check-circle text-[#8EDB43] mr-2';
-            toast.classList.remove('opacity-0');
-            setTimeout(() => { toast.classList.add('opacity-0'); }, 3000);
-        }
-
-        function renderSettingsUI() {
-            document.getElementById('set-multiplier').value = appSettings.multiplier;
-            document.getElementById('set-tax-rate').value = appSettings.taxRate;
-            document.getElementById('set-cc-rate').value = appSettings.ccRate;
-            document.getElementById('set-labor-std').value = appSettings.labor.std;
-            document.getElementById('set-labor-sl').value = appSettings.labor.sl;
-            document.getElementById('set-labor-dbl').value = appSettings.labor.dbl;
-            document.getElementById('set-addon-mask').value = appSettings.addons.maskList;
-            document.getElementById('set-addon-grille').value = appSettings.addons.grilleList;
-
-            document.getElementById('set-ph-sgl68').value = appSettings.prehang.sgl68;
-            document.getElementById('set-ph-sgl80').value = appSettings.prehang.sgl80;
-            document.getElementById('set-ph-dbl68').value = appSettings.prehang.dbl68;
-            document.getElementById('set-ph-dbl80').value = appSettings.prehang.dbl80;
-            document.getElementById('set-ph-jamb').value = appSettings.prehang.jambWide;
-            
-            document.getElementById('taxRateLabel').innerText = appSettings.taxRate;
-            document.getElementById('prop-tax-rate').innerText = appSettings.taxRate;
-            document.getElementById('ccRateInput').value = appSettings.ccRate;
-            document.getElementById('prop-cc-rate').innerText = appSettings.ccRate;
         }
 
         function setBuilderMode(mode) {
@@ -1166,7 +1327,7 @@
                 const title = `${currentMaterial === 'wood' ? 'Solid Wood' : 'Fiberglass'} - ${currentCollection}`;
                 document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Doors: ${title}`;
                 
-                grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-2"; 
+                grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-2"; 
 
                 const models = appSettings.db[currentMaterial][currentCollection];
                 models.forEach((model, index) => {
@@ -1595,7 +1756,6 @@
             setTimeout(() => { document.title = originalTitle; }, 2000);
         }
 
-        // EDIT LIFECYCLE
         function editItem(index) {
             const item = quoteItems[index];
             const cfg = item.rawConfig;
@@ -1664,7 +1824,6 @@
             const margin = parseFloat(document.getElementById('marginSlider').value) / 100;
             const qty = parseInt(document.getElementById('itemQty').value) || 1;
             
-            // --- CUSTOM ITEM ENGINE PATH ---
             if (currentBuilderMode === 'custom') {
                 const title = document.getElementById('customTitle').value.trim();
                 const desc = document.getElementById('customDesc').value.trim();
@@ -1747,7 +1906,6 @@
                 return;
             }
 
-            // --- STANDARD CATALOG ENGINE PATH ---
             const doorSize = document.getElementById('doorSize').value;
             if (!currentlySelectedModel || !doorSize) {
                 document.getElementById('priceRetail').innerText = "$0.00";
@@ -2282,7 +2440,6 @@
                 </div>`;
             }
 
-            // BRANCH: RENDER SLEEK CUSTOM ITEM CARD
             if (state.isCustom) {
                 card.className = "proposal-item-card flex flex-col border-b-2 border-slate-200 pb-6 print-border-bottom";
                 card.innerHTML = `
@@ -2308,10 +2465,8 @@
                 return;
             }
 
-            // BRANCH: RENDER STANDARD BROCHURE CARD
             card.className = "proposal-item-card flex flex-col border-b-2 border-slate-200 pb-8";
             let html = `
-                <!-- Card Header -->
                 <div class="flex justify-between items-end mb-5">
                     <div>
                         <h3 class="font-black text-lg text-slate-800 uppercase tracking-widest">Hoelscher Door Unit</h3>
@@ -2323,10 +2478,7 @@
                     </div>
                 </div>
                 
-                <!-- Card Body (3-Column Split Grid) -->
                 <div class="grid grid-cols-12 gap-6">
-                    
-                    <!-- Left: Door Hero (33%) -->
                     <div class="col-span-4">
                         <div class="preview-hero">
                             <div class="preview-fallback"><i class="fas fa-door-closed text-3xl mb-2 text-slate-300"></i>Door Model</div>
@@ -2334,7 +2486,6 @@
                         </div>
                     </div>
                     
-                    <!-- Middle: Enlarged Swatches (25%) -->
                     <div class="col-span-3 flex flex-col gap-4">
             `;
 
@@ -2353,7 +2504,6 @@
             html += `
                     </div>
                     
-                    <!-- Right: Text Specs (42%) -->
                     <div class="col-span-5 grid grid-cols-1 gap-y-4 content-start text-sm pr-4">
                         <div>
                             <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Model</p>
@@ -2514,6 +2664,7 @@
                 document.getElementById('nav-settings').classList.remove('text-slate-400');
                 renderSettingsUI();
                 populateEditModels();
+                renderSettingsSavedQuotes(); // Refresh table when opening settings
             }
         }
     </script>
