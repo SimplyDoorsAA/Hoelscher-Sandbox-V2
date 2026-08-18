@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SimplyDoors Quoting System - Sandbox V2</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome & Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -14,9 +16,9 @@
             color: #1e293b; 
             overflow-x: hidden;
         }
+        
         /* SimplyDoors Official Color Adjustments */
         .material-btn.active { background-color: #8EDB43; color: #1A1A1A; border-color: #8EDB43; }
-        
         .collection-card.active { border-color: #8EDB43; background-color: #f4fbf0; }
         .collection-card.active h4 { color: #1A1A1A; }
         .collection-card.active .browse-btn { background-color: #1A1A1A; color: #8EDB43; border-color: #1A1A1A; }
@@ -25,6 +27,7 @@
         .tab-btn.active { border-bottom: 3px solid #8EDB43; color: #8EDB43; }
         .tab-btn { border-bottom: 3px solid transparent; }
         
+        /* Custom Slider Styling */
         input[type=range] { -webkit-appearance: none; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #8EDB43; cursor: pointer; margin-top: -6px; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
@@ -47,6 +50,7 @@
             overflow: hidden;
             flex-shrink: 0;
         }
+        
         /* Hero Preview Box for Proposal Tab */
         .preview-hero {
             position: relative;
@@ -57,6 +61,7 @@
             background-color: #f8fafc;
             overflow: hidden;
         }
+        
         /* Swatch Preview Box for Proposal Tab */
         .preview-swatch-large {
             position: relative;
@@ -156,7 +161,7 @@
         <!-- LEFT COLUMN -->
         <div class="col-span-8 space-y-6 pb-12">
             
-            <!-- 1. Material & Collection Toggle -->
+            <!-- 1. Material & Collection -->
             <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                 <div class="flex items-center mb-5">
                     <span class="bg-[#8EDB43] text-[#1A1A1A] w-6 h-6 rounded-full flex items-center justify-center text-xs font-black mr-3">1</span>
@@ -218,7 +223,7 @@
                     <h2 class="text-xs font-black text-slate-800 uppercase tracking-widest">Glass & Finish Selection</h2>
                 </div>
                 
-                <!-- HIDDEN SELECTS (The Math Engine Reads These) -->
+                <!-- HIDDEN SELECTS -->
                 <select id="doorGlass" class="hidden" onchange="syncCustomCards(); runQuoteEngine();"></select>
                 <select id="doorFinish" class="hidden" onchange="syncCustomCards(); runQuoteEngine();"></select>
 
@@ -305,8 +310,7 @@
                     </div>
                 </div>
 
-                <div id="prehangAlert" class="p-4 rounded border text-sm mt-4" style="display: none;">
-                </div>
+                <div id="prehangAlert" class="p-4 rounded border text-sm mt-4" style="display: none;"></div>
             </section>
 
             <!-- 5. Add-ons, Hardware & Labor -->
@@ -371,7 +375,7 @@
 
         </div>
 
-        <!-- RIGHT COLUMN (STICKY SCROLL ARCHITECTURE) -->
+        <!-- RIGHT COLUMN -->
         <div class="col-span-4 sticky top-[80px] flex flex-col gap-4 self-start h-[calc(100vh-100px)]">
             
             <!-- CURRENT ITEM CONFIGURATION SUMMARY -->
@@ -383,7 +387,6 @@
                 </div>
 
                 <div class="overflow-y-auto custom-scroll flex-1 bg-[#222222]">
-                    <!-- DYNAMIC IMAGE PREVIEWS -->
                     <div class="p-4 border-b border-[#333333] bg-[#1A1A1A] flex justify-center gap-3">
                         <div class="preview-box border-[#333333] bg-[#222222]">
                             <div class="preview-fallback"><i class="fas fa-door-closed text-base mb-1 text-slate-500"></i>Door</div>
@@ -528,7 +531,6 @@
                     </div>
                 </div>
             </div>
-            
         </div>
     </main>
 
@@ -594,7 +596,6 @@
                 </div>
             </div>
 
-            <!-- BROCHURE CARDS CONTAINER -->
             <div id="prop-item-list" class="space-y-8 mb-8">
                 <!-- Cards Injected Here by JS -->
             </div>
@@ -634,7 +635,6 @@
                 </button>
             </div>
 
-            <!-- IN-HOUSE SHOP COSTS SECTION -->
             <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8">
                 <h3 class="font-black text-[11px] text-slate-700 uppercase tracking-widest mb-4 flex items-center"><i class="fas fa-tools text-[#8EDB43] mr-2 text-sm"></i> In-House Shop Costs (Net Parts + Labor)</h3>
                 <div class="grid grid-cols-5 gap-5">
@@ -669,7 +669,7 @@
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Vendor Net Multiplier</label>
                             <input type="number" step="0.01" id="set-multiplier" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white">
-                            <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Applied to catalog list prices (Default: 0.48)</p>
+                            <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Applied to catalog list prices</p>
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Sales Tax Rate (%)</label>
@@ -801,6 +801,8 @@
     <script>
         const REPO_BASE_URL = "https://simplydoorsaa.github.io/Hoelscher-Pricing-Testing/";
 
+        // DO NOT define defaultDBJSON here anymore. It loads cleanly from database.js
+
         let appSettings = {
             multiplier: 0.48,
             taxRate: 8.25,
@@ -808,7 +810,7 @@
             labor: { std: 450, sl: 650, dbl: 800 },
             addons: { maskList: 207, grilleList: 440 },
             prehang: { sgl68: 125, sgl80: 150, dbl68: 320, dbl80: 340, jambWide: 10 },
-            db: defaultDBJSON
+            db: null // Gets populated on load
         };
 
         let quoteItems = [];
@@ -1507,6 +1509,7 @@
             
             cancelEditMode();
             switchTab('quote-tab');
+            syncCustomCards(); // Ensure the UI reverts to defaults
             updateCartUI();
             showToast("Quote Cleared!");
         }
