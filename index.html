@@ -862,8 +862,11 @@
         }
 
         function applyPricingPatches(db) {
+            if (!db || Object.keys(db).length === 0) return;
             const patchPrices = (sizes) => {
+                if (!sizes) return;
                 Object.values(sizes).forEach(size => {
+                    if (!size || !size.prices) return;
                     let p = size.prices;
                     if(p.p_slab === 0) p.p_slab = p.u_slab + 600;
                     if(p.p_single === 0) p.p_single = p.u_single + 1000;
@@ -871,12 +874,14 @@
                 });
             };
             ['fiberglass', 'wood'].forEach(mat => {
-                Object.values(db[mat]).forEach(col => {
-                    col.forEach(model => patchPrices(model.sizes));
-                });
+                if (db[mat]) {
+                    Object.values(db[mat]).forEach(col => {
+                        col.forEach(model => patchPrices(model.sizes));
+                    });
+                }
             });
-            db.fiberglass_sidelites.forEach(sl => patchPrices(sl.sizes));
-            db.wood_sidelites.forEach(sl => patchPrices(sl.sizes));
+            if (db.fiberglass_sidelites) db.fiberglass_sidelites.forEach(sl => patchPrices(sl.sizes));
+            if (db.wood_sidelites) db.wood_sidelites.forEach(sl => patchPrices(sl.sizes));
         }
 
         function decodeSize(code) {
@@ -906,7 +911,15 @@
         }
 
         window.onload = () => {
-            appSettings.db = typeof defaultDBJSON !== 'undefined' ? defaultDBJSON : {};
+            // Guard clause to prevent fatal logic errors if database.js doesn't load/is empty
+            appSettings.db = typeof defaultDBJSON !== 'undefined' ? defaultDBJSON : {
+                fiberglass: { 'Mahogany': [] },
+                wood: { 'Mahogany Wood': [] },
+                fiberglass_sidelites: [],
+                wood_sidelites: [],
+                barn_hardware: []
+            };
+            
             loadSettings();
             applyPricingPatches(appSettings.db); 
             loadSavedQuotesFromStorage();
@@ -915,7 +928,10 @@
             document.getElementById('doorHanding').value = 'N/A (Slab)';
             document.getElementById('jambDepth').value = 'N/A';
             
-            setMaterial('fiberglass');
+            if (appSettings.db.fiberglass && Object.keys(appSettings.db.fiberglass).length > 0) {
+                setMaterial('fiberglass');
+            }
+            
             document.getElementById('prop-date').innerText = new Date().toISOString().split('T')[0];
             updateLaborDropdowns();
             closeCatalogModal();
@@ -980,7 +996,9 @@
             try {
                 const stored = localStorage.getItem('simplyDoorsSavedQuotes');
                 if (stored) {
-                    savedQuotes = JSON.parse(stored);
+                    const parsed = JSON.parse(stored);
+                    // Prevent corrupted legacy array data from crashing operations
+                    savedQuotes = (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : {};
                 }
             } catch(e) {
                 savedQuotes = {};
@@ -1002,7 +1020,7 @@
                 if (!cName) {
                     showToast("Enter Quote # or Customer Name.", true);
                     switchTab('proposal-tab');
-                    document.getElementById('custName').focus();
+                    setTimeout(() => { document.getElementById('custName').focus(); }, 100);
                     return;
                 }
                 qNum = cName + ' - ' + new Date().toISOString().split('T')[0];
@@ -1099,13 +1117,16 @@
                 const dateStr = new Date(q.timestamp).toLocaleString();
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-slate-100 hover:bg-slate-50";
+                
+                const safeKey = encodeURIComponent(k);
+                
                 tr.innerHTML = `
                     <td class="p-3 border-r border-slate-100 font-bold text-slate-700">${k}</td>
                     <td class="p-3 border-r border-slate-100 text-slate-500 text-xs">${dateStr}</td>
                     <td class="p-3 border-r border-slate-100 text-center font-mono font-semibold">${q.items.length}</td>
                     <td class="p-3 text-center">
-                        <button onclick="handleLoadQuote('${k}')" class="text-blue-500 hover:text-blue-700 font-bold text-[10px] uppercase tracking-widest mr-3"><i class="fas fa-folder-open mr-1"></i> Load</button>
-                        <button onclick="deleteSavedQuote('${k}')" class="text-red-400 hover:text-red-600 font-bold text-[10px] uppercase tracking-widest"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
+                        <button onclick="handleLoadQuote(decodeURIComponent('${safeKey}'))" class="text-blue-500 hover:text-blue-700 font-bold text-[10px] uppercase tracking-widest mr-3"><i class="fas fa-folder-open mr-1"></i> Load</button>
+                        <button onclick="deleteSavedQuote(decodeURIComponent('${safeKey}'))" class="text-red-400 hover:text-red-600 font-bold text-[10px] uppercase tracking-widest"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1209,6 +1230,7 @@
             const grid = document.getElementById('collection-grid');
             grid.innerHTML = '';
             
+            if (!appSettings.db || !appSettings.db[currentMaterial]) return;
             Object.keys(appSettings.db[currentMaterial]).forEach((col) => {
                 const isActive = col === currentCollection;
                 
@@ -1420,6 +1442,8 @@
             const modelSelect = document.getElementById('doorModel');
             modelSelect.innerHTML = '<option value="" disabled selected>Select Model Family...</option>';
             
+            if (!appSettings.db || !appSettings.db[currentMaterial] || !appSettings.db[currentMaterial][currentCollection]) return;
+            
             appSettings.db[currentMaterial][currentCollection].forEach((model, index) => {
                 const opt = document.createElement('option');
                 opt.value = index;
@@ -1553,12 +1577,14 @@
         function populateBarnHardware() {
             const barnSelect = document.getElementById('barnHardware');
             barnSelect.innerHTML = '<option value="0">None (Slab Only)</option>';
-            appSettings.db.barn_hardware.forEach((item, idx) => {
-                const opt = document.createElement('option');
-                opt.value = idx;
-                opt.innerText = `${item.name} (+$${item.list} List)`;
-                barnSelect.appendChild(opt);
-            });
+            if(appSettings.db.barn_hardware) {
+                appSettings.db.barn_hardware.forEach((item, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.innerText = `${item.name} (+$${item.list} List)`;
+                    barnSelect.appendChild(opt);
+                });
+            }
         }
 
         function handleSizeChange() {
@@ -1616,13 +1642,15 @@
                 slModelSelect.innerHTML = '';
                 const sideliteDb = currentMaterial === 'wood' ? appSettings.db.wood_sidelites : appSettings.db.fiberglass_sidelites;
                 
-                sideliteDb.forEach((sl, index) => {
-                    const opt = document.createElement('option');
-                    opt.value = index;
-                    opt.innerText = sl.name;
-                    if(index === 0) opt.selected = true;
-                    slModelSelect.appendChild(opt);
-                });
+                if(sideliteDb) {
+                    sideliteDb.forEach((sl, index) => {
+                        const opt = document.createElement('option');
+                        opt.value = index;
+                        opt.innerText = sl.name;
+                        if(index === 0) opt.selected = true;
+                        slModelSelect.appendChild(opt);
+                    });
+                }
                 
                 populateSideliteSizes();
             } else {
@@ -1636,7 +1664,7 @@
         function populateSideliteSizes() {
             const index = document.getElementById('slModel').value;
             const sideliteDb = currentMaterial === 'wood' ? appSettings.db.wood_sidelites : appSettings.db.fiberglass_sidelites;
-            currentlySelectedSidelite = sideliteDb[index];
+            currentlySelectedSidelite = sideliteDb ? sideliteDb[index] : null;
             if(!currentlySelectedSidelite) return;
 
             const slSizeSelect = document.getElementById('slSize');
@@ -1920,7 +1948,7 @@
 
             if (isBarn) {
                 const barnHwSelect = document.getElementById('barnHardware');
-                if (barnHwSelect.value !== "0") {
+                if (barnHwSelect && barnHwSelect.value !== "0" && appSettings.db.barn_hardware) {
                     const hwIdx = parseInt(barnHwSelect.value);
                     const hwItem = appSettings.db.barn_hardware[hwIdx];
                     if(hwItem) {
@@ -1929,7 +1957,7 @@
                     }
                 }
             } else {
-                if (document.getElementById('addOnContainer').style.display !== 'none' && addOnsSelect.value !== "0") {
+                if (document.getElementById('addOnContainer').style.display !== 'none' && addOnsSelect && addOnsSelect.value !== "0") {
                     let addOnListVal = 0;
                     if (addOnsSelect.value.startsWith('maskList')) addOnListVal = appSettings.addons.maskList;
                     else if (addOnsSelect.value === 'maskWindsor') addOnListVal = 242;
@@ -1943,7 +1971,7 @@
                 }
 
                 const casingSelect = document.getElementById('casingAdder');
-                if (currentMaterial === 'wood' && casingSelect.value !== "0") {
+                if (casingSelect && currentMaterial === 'wood' && casingSelect.value !== "0") {
                     let casingListVal = 0;
                     if (casingSelect.value === 'int_casing') casingListVal = currentlySelectedModel.shaped ? 151 : 83;
                     else if (casingSelect.value === '1x4_casing') casingListVal = currentlySelectedModel.shaped ? 177 : 135;
@@ -2087,7 +2115,7 @@
                 let slabW = nomW - 0.25;
                 let slabH = nomH - 0.75;
                 if (isDouble) slabW = (nomW * 2) - 0.25; 
-                if (slQty > 0) {
+                if (slQty > 0 && document.getElementById('slSize')) {
                     const slW = decodeSize(document.getElementById('slSize').value).w - 0.25;
                     slabW += (slW * slQty);
                 }
@@ -2097,7 +2125,7 @@
                 let unitW = nomW + 1.75;
                 let unitH = nomH + 2.75;
                 if (isDouble) unitW = (nomW * 2) + 2.625;
-                if (slQty > 0) {
+                if (slQty > 0 && document.getElementById('slSize')) {
                     const slW = decodeSize(document.getElementById('slSize').value).w;
                     unitW += (slW * slQty) + (1.5 * slQty);
                 }
