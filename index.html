@@ -533,6 +533,14 @@
                         
                         <div class="flex items-center justify-between border-t border-[#333333] pt-2">
                             <label class="flex items-center text-slate-300 cursor-pointer font-bold tracking-wider">
+                                <input type="checkbox" id="overrideFreightCheck" onchange="updateCartUI()" class="mr-2 rounded bg-[#1A1A1A] border-[#444444] cursor-pointer h-3 w-3 accent-[#8EDB43]"> 
+                                Override Base Freight: $<input type="number" id="overrideFreightValue" value="0.00" oninput="updateCartUI()" class="bg-[#1A1A1A] text-white border border-[#444444] rounded px-1 w-12 outline-none h-5 ml-1 font-mono text-center">
+                            </label>
+                            <span id="display-freight" class="text-slate-300 font-mono font-semibold">+$0.00</span>
+                        </div>
+
+                        <div class="flex items-center justify-between border-t border-[#333333] pt-2">
+                            <label class="flex items-center text-slate-300 cursor-pointer font-bold tracking-wider">
                                 <input type="checkbox" id="applyTax" checked onchange="updateCartUI()" class="mr-2 rounded bg-[#1A1A1A] border-[#444444] cursor-pointer h-3 w-3 accent-[#8EDB43]"> 
                                 Apply Tax (<span id="taxRateLabel">8.25</span>%)
                             </label>
@@ -542,7 +550,7 @@
                         <div class="flex items-center justify-between border-t border-[#333333] pt-2">
                             <label class="flex items-center text-slate-300 cursor-pointer font-bold tracking-wider">
                                 <input type="checkbox" id="applyCC" onchange="updateCartUI()" class="mr-2 rounded bg-[#1A1A1A] border-[#444444] cursor-pointer h-3 w-3 accent-[#8EDB43]"> 
-                                Add CC Fee (<input type="number" id="ccRateInput" value="3.0" min="0" max="99.9" oninput="updateCartUI()" class="bg-[#1A1A1A] text-white border border-[#444444] rounded px-1 w-10 outline-none h-5 ml-1 font-mono">%)
+                                Add CC Fee (<input type="number" id="ccRateInput" value="3.0" min="0" max="99.9" oninput="updateCartUI()" class="bg-[#1A1A1A] text-white border border-[#444444] rounded px-1 w-10 outline-none h-5 ml-1 font-mono text-center">%)
                             </label>
                             <span id="display-cc" class="text-slate-300 font-mono font-semibold">+$0.00</span>
                         </div>
@@ -642,6 +650,7 @@
                 <div class="w-1/3 text-right space-y-1.5">
                     <div class="flex justify-between text-xs text-slate-600"><span class="font-bold uppercase tracking-wider">Materials Subtotal:</span> <span id="prop-mat-total" class="font-mono font-semibold">$0.00</span></div>
                     <div class="flex justify-between text-xs text-slate-600"><span class="font-bold uppercase tracking-wider">Labor Subtotal:</span> <span id="prop-lab-total" class="font-mono font-semibold">$0.00</span></div>
+                    <div class="flex justify-between text-xs text-slate-600" id="prop-freight-row"><span class="font-bold uppercase tracking-wider">Estimated Freight:</span> <span id="prop-freight-total" class="font-mono font-semibold">$0.00</span></div>
                     <div class="flex justify-between text-xs text-red-500" id="prop-disc-row"><span class="font-bold uppercase tracking-wider">Discount:</span> <span id="prop-disc-total" class="font-mono font-semibold">-$0.00</span></div>
                     <div class="flex justify-between text-xs text-slate-600" id="prop-tax-row"><span class="font-bold uppercase tracking-wider">Tax (<span id="prop-tax-rate">8.25</span>%):</span> <span id="prop-tax-total" class="font-mono font-semibold">$0.00</span></div>
                     <div class="flex justify-between text-xs text-slate-600" id="prop-cc-row"><span class="font-bold uppercase tracking-wider">CC Fee (<span id="prop-cc-rate">3.0</span>%):</span> <span id="prop-cc-total" class="font-mono font-semibold">$0.00</span></div>
@@ -666,6 +675,32 @@
                 <button onclick="saveSettings()" class="bg-[#1A1A1A] hover:bg-[#333333] text-[#8EDB43] px-6 py-2.5 rounded shadow font-black tracking-widest uppercase transition-colors flex items-center text-xs border border-[#444]">
                     <i class="fas fa-save mr-2"></i> Save Settings
                 </button>
+            </div>
+
+            <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8">
+                <h3 class="font-black text-[11px] text-slate-700 uppercase tracking-widest mb-4 flex items-center"><i class="fas fa-truck text-[#8EDB43] mr-2 text-sm"></i> Freight & Shipping Rules</h3>
+                <div class="grid grid-cols-5 gap-5">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Base: 1-3 Units ($)</label>
+                        <div class="flex items-center"><span class="bg-slate-200 px-3 py-2.5 border border-r-0 border-slate-300 rounded-l text-sm text-slate-600 font-bold">$</span><input type="number" id="set-fr-t1" class="w-full p-2.5 border border-slate-300 rounded-r focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white"></div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Base: 4-6 Units ($)</label>
+                        <div class="flex items-center"><span class="bg-slate-200 px-3 py-2.5 border border-r-0 border-slate-300 rounded-l text-sm text-slate-600 font-bold">$</span><input type="number" id="set-fr-t2" class="w-full p-2.5 border border-slate-300 rounded-r focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white"></div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Base: 7-9 Units ($)</label>
+                        <div class="flex items-center"><span class="bg-slate-200 px-3 py-2.5 border border-r-0 border-slate-300 rounded-l text-sm text-slate-600 font-bold">$</span><input type="number" id="set-fr-t3" class="w-full p-2.5 border border-slate-300 rounded-r focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white"></div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Prehang Surcharge ($)</label>
+                        <div class="flex items-center"><span class="bg-slate-200 px-3 py-2.5 border border-r-0 border-slate-300 rounded-l text-sm text-slate-600 font-bold">$</span><input type="number" id="set-fr-prehang" class="w-full p-2.5 border border-slate-300 rounded-r focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white"></div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Freight Margin (%)</label>
+                        <div class="flex items-center"><input type="number" step="0.1" id="set-fr-margin" class="w-full p-2.5 border border-slate-300 rounded-l focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white" placeholder="0"><span class="bg-slate-200 px-3 py-2.5 border border-l-0 border-slate-300 rounded-r text-sm text-slate-600 font-bold">%</span></div>
+                    </div>
+                </div>
             </div>
 
             <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8">
@@ -847,6 +882,7 @@
             labor: { std: 450, sl: 650, dbl: 800 },
             addons: { maskList: 207, grilleList: 440 },
             prehang: { sgl68: 125, sgl80: 150, dbl68: 320, dbl80: 340, jambWide: 10 },
+            freight: { t1: 120, t2: 165, t3: 200, prehang: 100, margin: 0 },
             db: null
         };
 
@@ -952,6 +988,7 @@
                     appSettings.labor = parsed.labor || appSettings.labor;
                     appSettings.addons = parsed.addons || appSettings.addons;
                     appSettings.prehang = parsed.prehang || appSettings.prehang;
+                    appSettings.freight = parsed.freight || appSettings.freight;
                     if(parsed.db && parsed.db.wood) appSettings.db = parsed.db;
                 }
             } catch(e) {
@@ -976,6 +1013,12 @@
             appSettings.prehang.dbl68 = parseFloat(document.getElementById('set-ph-dbl68').value) || 0;
             appSettings.prehang.dbl80 = parseFloat(document.getElementById('set-ph-dbl80').value) || 0;
             appSettings.prehang.jambWide = parseFloat(document.getElementById('set-ph-jamb').value) || 0;
+
+            appSettings.freight.t1 = parseFloat(document.getElementById('set-fr-t1').value) || 0;
+            appSettings.freight.t2 = parseFloat(document.getElementById('set-fr-t2').value) || 0;
+            appSettings.freight.t3 = parseFloat(document.getElementById('set-fr-t3').value) || 0;
+            appSettings.freight.prehang = parseFloat(document.getElementById('set-fr-prehang').value) || 0;
+            appSettings.freight.margin = parseFloat(document.getElementById('set-fr-margin').value) || 0;
 
             try {
                 localStorage.setItem('simplyDoorsPricingDB_v2', JSON.stringify(appSettings));
@@ -1038,7 +1081,9 @@
                     discountValue: document.getElementById('discountValue').value,
                     applyTax: document.getElementById('applyTax').checked,
                     applyCC: document.getElementById('applyCC').checked,
-                    ccRateInput: document.getElementById('ccRateInput').value
+                    ccRateInput: document.getElementById('ccRateInput').value,
+                    overrideFreightCheck: document.getElementById('overrideFreightCheck') ? document.getElementById('overrideFreightCheck').checked : false,
+                    overrideFreightValue: document.getElementById('overrideFreightValue') ? document.getElementById('overrideFreightValue').value : 0
                 }
             };
             
@@ -1090,6 +1135,11 @@
                 document.getElementById('applyTax').checked = q.settings.applyTax !== false;
                 document.getElementById('applyCC').checked = q.settings.applyCC === true;
                 document.getElementById('ccRateInput').value = q.settings.ccRateInput || appSettings.ccRate;
+                
+                if (document.getElementById('overrideFreightCheck')) {
+                    document.getElementById('overrideFreightCheck').checked = q.settings.overrideFreightCheck === true;
+                    document.getElementById('overrideFreightValue').value = q.settings.overrideFreightValue || 0;
+                }
             }
             
             quoteItems = JSON.parse(JSON.stringify(q.items || []));
@@ -1165,6 +1215,12 @@
             document.getElementById('set-ph-dbl80').value = appSettings.prehang.dbl80;
             document.getElementById('set-ph-jamb').value = appSettings.prehang.jambWide;
             
+            document.getElementById('set-fr-t1').value = appSettings.freight.t1;
+            document.getElementById('set-fr-t2').value = appSettings.freight.t2;
+            document.getElementById('set-fr-t3').value = appSettings.freight.t3;
+            document.getElementById('set-fr-prehang').value = appSettings.freight.prehang;
+            document.getElementById('set-fr-margin').value = appSettings.freight.margin;
+
             document.getElementById('taxRateLabel').innerText = appSettings.taxRate;
             document.getElementById('prop-tax-rate').innerText = appSettings.taxRate;
             document.getElementById('ccRateInput').value = appSettings.ccRate;
@@ -2070,6 +2126,18 @@
             const unitLaborRetail = laborNet; 
             const unitRetailPrice = unitMaterialsRetail + unitLaborRetail;
 
+            let hUnits = 0;
+            if (isSlabOnly || isBarn) {
+                hUnits = isDouble ? 2 : 1;
+            } else {
+                if (layout === 'Single') hUnits = 1;
+                else if (layout === 'Single + 1 SL') hUnits = 1.5;
+                else if (layout === 'Single + 2 SL') hUnits = 2;
+                else if (layout === 'Double') hUnits = 2;
+                else hUnits = 1; 
+            }
+            let isVendorPrehang = (!isSlabOnly && !isBarn && !isInHouse);
+
             document.getElementById('marginDisplay').innerText = `${(margin * 100).toFixed(0)}%`;
             document.getElementById('labelCostSlab').innerText = "Door Slab(s) Net:";
             document.getElementById('costSlab').innerText = `$${slabNet.toFixed(2)}`;
@@ -2203,6 +2271,8 @@
                 layout, glass, finish, addonsDesc, laborDesc, slDesc, doorHanding,
                 urlDoor: doorImgEl.src, urlGlass: glassImgEl.src, urlFinish, urlAddon,
                 isUnfinished,
+                hoelscherUnits: hUnits,
+                isVendorPrehang: isVendorPrehang,
                 rawConfig: {
                     isCustom: false,
                     material: currentMaterial,
@@ -2262,7 +2332,7 @@
             if(quoteItems.length === 0 && !window.currentQuoteState) {
                 cartContainer.classList.add('hidden');
                 document.getElementById('grandTotalRetail').innerText = "$0.00";
-                generateProposal(0, 0, 0, 0, 0, 0, false, false, [], true);
+                generateProposal(0, 0, 0, 0, 0, 0, false, false, [], true, 0);
                 return;
             }
             
@@ -2271,6 +2341,9 @@
             
             let totalMaterials = 0;
             let totalLabor = 0;
+            let totalHUnits = 0;
+            let totalPrehangs = 0;
+            
             let isPreview = quoteItems.length === 0;
             let itemsToCalc = isPreview ? [window.currentQuoteState] : quoteItems;
 
@@ -2297,12 +2370,41 @@
             itemsToCalc.forEach(item => {
                 totalMaterials += item.lineMaterials;
                 totalLabor += item.lineLabor;
+                if (!item.isCustom) {
+                    totalHUnits += (item.hoelscherUnits || 0) * item.qty;
+                    if (item.isVendorPrehang) totalPrehangs += item.qty;
+                }
             });
             
+            // --- FREIGHT CALCULATION ---
+            let baseFreight = 0;
+            if (totalHUnits > 0 && totalHUnits <= 3) baseFreight = appSettings.freight.t1;
+            else if (totalHUnits > 3 && totalHUnits <= 6) baseFreight = appSettings.freight.t2;
+            else if (totalHUnits > 6 && totalHUnits <= 9) baseFreight = appSettings.freight.t3;
+            else if (totalHUnits >= 10) baseFreight = 0;
+
+            const overrideFreightCheck = document.getElementById('overrideFreightCheck') ? document.getElementById('overrideFreightCheck').checked : false;
+            if (overrideFreightCheck) {
+                const overrideVal = parseFloat(document.getElementById('overrideFreightValue').value);
+                baseFreight = isNaN(overrideVal) ? 0 : overrideVal;
+            } else if (document.getElementById('overrideFreightValue')) {
+                document.getElementById('overrideFreightValue').value = baseFreight.toFixed(2);
+            }
+
+            const prehangFreight = totalPrehangs * appSettings.freight.prehang;
+            const totalFreightNet = baseFreight + prehangFreight;
+            
+            const freightMargin = (appSettings.freight.margin || 0) / 100;
+            const totalFreightRetail = totalFreightNet / (1 - freightMargin);
+            
+            if(document.getElementById('display-freight')) {
+                document.getElementById('display-freight').innerText = `+$${totalFreightRetail.toFixed(2)}`;
+            }
+
             const discountType = document.getElementById('discountType').value;
             const discountInput = document.getElementById('discountValue');
             let discountAmount = 0;
-            const subtotalGross = totalMaterials + totalLabor;
+            const subtotalGross = totalMaterials + totalLabor + totalFreightRetail;
             
             if (discountType === 'none') {
                 discountInput.classList.add('hidden');
@@ -2352,10 +2454,10 @@
             const grandTotal = preCCTotal + ccAmount;
             document.getElementById('grandTotalRetail').innerText = `$${grandTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
             
-            generateProposal(totalMaterials, totalLabor, discountAmount, taxAmount, ccAmount, grandTotal, applyTax, applyCC, itemsToCalc, isPreview);
+            generateProposal(totalMaterials, totalLabor, discountAmount, taxAmount, ccAmount, grandTotal, applyTax, applyCC, itemsToCalc, isPreview, totalFreightRetail);
         }
 
-        function generateProposal(totalMaterials, totalLabor, discountAmount, taxAmount, ccAmount, grandTotal, applyTax, applyCC, itemsToCalc, isPreview) {
+        function generateProposal(totalMaterials, totalLabor, discountAmount, taxAmount, ccAmount, grandTotal, applyTax, applyCC, itemsToCalc, isPreview, totalFreightRetail) {
             document.getElementById('prop-quote-num').innerText = document.getElementById('quoteNumber').value || 'TBD';
             document.getElementById('prop-rep').innerText = document.getElementById('salesRep').value;
             
@@ -2373,6 +2475,14 @@
             document.getElementById('prop-mat-total').innerText = `$${totalMaterials.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('prop-lab-total').innerText = `$${totalLabor.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             
+            const freightRow = document.getElementById('prop-freight-row');
+            if (totalFreightRetail > 0) {
+                freightRow.style.display = 'flex';
+                document.getElementById('prop-freight-total').innerText = `$${totalFreightRetail.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            } else {
+                freightRow.style.display = 'none';
+            }
+
             const discRow = document.getElementById('prop-disc-row');
             if (discountAmount > 0) {
                 discRow.style.display = 'flex';
