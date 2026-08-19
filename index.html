@@ -294,15 +294,20 @@
                     <div id="slContainer" class="hidden pt-4 border-t border-slate-100 mt-4">
                         <div class="grid grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Sidelite Model</label>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Sidelite Model</label>
+                                    <button type="button" onclick="openVisualBrowser('sidelite')" class="text-[10px] text-slate-600 hover:text-slate-900 font-bold flex items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider">
+                                        <i class="fas fa-th mr-1"></i> Browse
+                                    </button>
+                                </div>
                                 <select id="slModel" onchange="populateSideliteSizes()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Sidelite Size</label>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 mt-1">Sidelite Size</label>
                                 <select id="slSize" onchange="populateSideliteGlass()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Sidelite Glass</label>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 mt-1">Sidelite Glass</label>
                                 <select id="slGlass" onchange="runQuoteEngine()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
                             </div>
                         </div>
@@ -1366,7 +1371,7 @@
                 const title = `${currentMaterial === 'wood' ? 'Solid Wood' : 'Fiberglass'} - ${currentCollection}`;
                 document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Doors: ${title}`;
                 
-                grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-2"; 
+                grid.className = "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 px-2"; 
 
                 const models = appSettings.db[currentMaterial][currentCollection];
                 models.forEach((model, index) => {
@@ -1383,14 +1388,40 @@
                             <img src="${imgSrc}" class="w-full h-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
                         </div>
                         <div class="p-5 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
-                            <p class="text-sm font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors leading-snug">${model.name}</p>
+                            <p class="text-xs font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors leading-snug">${model.name}</p>
                         </div>
                     `;
                     grid.appendChild(card);
                 });
+            } else if (type === 'sidelite') {
+                document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Sidelites`;
+                grid.className = "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 px-2";
+
+                const sideliteDb = currentMaterial === 'wood' ? appSettings.db.wood_sidelites : appSettings.db.fiberglass_sidelites;
+                if(sideliteDb) {
+                    sideliteDb.forEach((sl, index) => {
+                        const safeSlName = slugify(sl.name);
+                        const imgSrc = `${REPO_BASE_URL}images/${matFolder}/sidelites/${safeSlName}.jpg`;
+                        
+                        const card = document.createElement('div');
+                        card.className = "bg-[#222] border border-[#444] rounded-xl overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
+                        card.onclick = () => { selectFromVisualBrowser('sidelite', index); };
+                        
+                        card.innerHTML = `
+                            <div class="w-full aspect-[1/3] bg-[#1A1A1A] relative flex items-center justify-center p-4">
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest">Image</div>
+                                <img src="${imgSrc}" class="w-full h-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
+                            </div>
+                            <div class="p-4 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
+                                <p class="text-xs font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors leading-snug">${sl.name}</p>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                }
             } else if (type === 'glass') {
                 document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Glass & Glazing`;
-                grid.className = "grid grid-cols-1 gap-8 max-w-5xl mx-auto w-full px-2";
+                grid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto w-full px-2";
                 
                 const glassSelect = document.getElementById('doorGlass');
                 Array.from(glassSelect.options).forEach((opt) => {
@@ -1404,7 +1435,7 @@
                     card.onclick = () => { selectFromVisualBrowser('glass', glassName); };
                     
                     card.innerHTML = `
-                        <div class="w-full h-48 md:h-64 bg-[#1A1A1A] relative flex items-center justify-center overflow-hidden">
+                        <div class="w-full aspect-[4/3] bg-[#1A1A1A] relative flex items-center justify-center overflow-hidden">
                             ${isSolidPanel ? '<i class="fas fa-ban text-6xl text-slate-600"></i>' : `<div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest">Image</div><img src="${imgSrc}" class="w-full h-full object-cover relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">`}
                         </div>
                         <div class="p-5 border-t border-[#444] bg-[#222] flex items-center justify-center">
@@ -1415,7 +1446,7 @@
                 });
             } else if (type === 'finish') {
                 document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Finish & Stains`;
-                grid.className = "grid grid-cols-2 lg:grid-cols-3 gap-8 px-2";
+                grid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto w-full px-2";
                 
                 const finishSelect = document.getElementById('doorFinish');
                 Array.from(finishSelect.options).forEach((opt) => {
@@ -1441,7 +1472,7 @@
                 });
             } else if (type === 'addon') {
                 document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Add-ons`;
-                grid.className = "grid grid-cols-2 lg:grid-cols-3 gap-8 px-2";
+                grid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto w-full px-2";
                 
                 const addonSelect = document.getElementById('addOns');
                 Array.from(addonSelect.options).forEach((opt) => {
@@ -1478,6 +1509,9 @@
             if (type === 'door') {
                 document.getElementById('doorModel').value = value;
                 populateOptions();
+            } else if (type === 'sidelite') {
+                document.getElementById('slModel').value = value;
+                populateSideliteSizes();
             } else if (type === 'glass') {
                 document.getElementById('doorGlass').value = value;
                 syncCustomCards();
