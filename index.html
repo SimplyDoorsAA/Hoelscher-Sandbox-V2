@@ -576,7 +576,10 @@
                 <h2 class="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center">
                     <i class="fas fa-address-card text-[#8EDB43] mr-2 text-lg"></i> Client Information
                 </h2>
-                <button onclick="clearQuote()" class="text-[10px] text-slate-500 hover:text-red-600 font-bold px-3 py-1.5 bg-slate-100 rounded border border-slate-200 transition-colors uppercase tracking-wider"><i class="fas fa-trash-alt mr-1"></i> Start New Quote</button>
+                <div class="flex gap-2">
+                    <button onclick="saveCurrentQuote()" class="text-[10px] text-white bg-blue-600 hover:bg-blue-500 font-bold px-4 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider flex items-center"><i class="fas fa-save mr-2"></i> Save Quote</button>
+                    <button onclick="clearQuote()" class="text-[10px] text-slate-500 hover:text-red-600 font-bold px-3 py-1.5 bg-slate-100 rounded border border-slate-200 transition-colors uppercase tracking-wider flex items-center"><i class="fas fa-trash-alt mr-1"></i> Start New Quote</button>
+                </div>
             </div>
             
             <div class="grid grid-cols-4 gap-6">
@@ -911,7 +914,6 @@
         }
 
         window.onload = () => {
-            // Guard clause to prevent fatal logic errors if database.js doesn't load/is empty
             appSettings.db = typeof defaultDBJSON !== 'undefined' ? defaultDBJSON : {
                 fiberglass: { 'Mahogany': [] },
                 wood: { 'Mahogany Wood': [] },
@@ -997,7 +999,6 @@
                 const stored = localStorage.getItem('simplyDoorsSavedQuotes');
                 if (stored) {
                     const parsed = JSON.parse(stored);
-                    // Prevent corrupted legacy array data from crashing operations
                     savedQuotes = (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : {};
                 }
             } catch(e) {
@@ -1008,21 +1009,19 @@
         }
 
         function saveCurrentQuote() {
-            if (quoteItems.length === 0) {
-                showToast("Cart is empty!", true);
+            let qNum = document.getElementById('quoteNumber').value.trim();
+            let cName = document.getElementById('custName').value.trim();
+
+            if (quoteItems.length === 0 && !cName && !qNum) {
+                showToast("Enter Customer Name or add items to save.", true);
+                if (document.getElementById('proposal-tab').style.display === 'none') {
+                    switchTab('proposal-tab');
+                }
+                setTimeout(() => { document.getElementById('custName').focus(); }, 100);
                 return;
             }
             
-            let qNum = document.getElementById('quoteNumber').value.trim();
-            let cName = document.getElementById('custName').value.trim();
-            
             if (!qNum) {
-                if (!cName) {
-                    showToast("Enter Quote # or Customer Name.", true);
-                    switchTab('proposal-tab');
-                    setTimeout(() => { document.getElementById('custName').focus(); }, 100);
-                    return;
-                }
                 qNum = cName + ' - ' + new Date().toISOString().split('T')[0];
                 document.getElementById('quoteNumber').value = qNum;
             }
