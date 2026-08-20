@@ -193,21 +193,31 @@
                         <span class="bg-[#8EDB43] text-[#1A1A1A] w-6 h-6 rounded-full flex items-center justify-center text-xs font-black mr-3">2</span>
                         <h2 class="text-xs font-black text-slate-800 uppercase tracking-widest">Door Model & Dimensions</h2>
                     </div>
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
+                    
+                    <select id="doorModel" class="hidden" onchange="populateOptions()"></select>
+
+                    <div class="grid grid-cols-2 gap-6 h-full items-stretch">
+                        <div class="h-full flex flex-col">
+                            <div class="flex justify-between items-center mb-2">
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Door Model Family</label>
-                                <div class="flex space-x-2">
-                                    <button id="viewCatalogBtn" onclick="openCatalogModal()" class="text-[10px] text-slate-600 hover:text-slate-900 font-bold hidden items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider">
-                                        <i class="fas fa-book-open mr-1"></i> PDF
-                                    </button>
-                                </div>
+                                <button id="viewCatalogBtn" onclick="openCatalogModal()" class="text-[10px] text-slate-600 hover:text-slate-900 font-bold hidden items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider">
+                                    <i class="fas fa-book-open mr-1"></i> PDF
+                                </button>
                             </div>
-                            <select id="doorModel" onchange="populateOptions()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
+                            <div class="collection-card active p-4 border-2 border-[#8EDB43] bg-[#f4fbf0] rounded-lg text-left transition-colors cursor-pointer flex flex-col justify-between flex-1 min-h-[8rem]" onclick="openVisualBrowser('door')">
+                                <div class="mb-3">
+                                    <h4 id="doorModelCardLabel" class="font-bold text-sm mb-1 text-[#1A1A1A] transition-colors">Select Model</h4>
+                                    <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Selected Door</p>
+                                </div>
+                                <button type="button" class="browse-btn w-full py-2 bg-[#1A1A1A] text-[#8EDB43] rounded text-[10px] font-black uppercase tracking-widest transition-colors border border-[#1A1A1A] shadow-sm flex items-center justify-center">
+                                    <i class="fas fa-th mr-1"></i> Visual Browse
+                                </button>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Nominal Door Size (W x H)</label>
-                            <select id="doorSize" onchange="handleSizeChange()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
+                        
+                        <div class="flex flex-col">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 mt-1">Nominal Door Size (W x H)</label>
+                            <select id="doorSize" onchange="handleSizeChange()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50 flex-1"></select>
                         </div>
                     </div>
 
@@ -227,9 +237,9 @@
                     <select id="doorFinish" class="hidden" onchange="syncCustomCards(); runQuoteEngine();"></select>
 
                     <div class="grid grid-cols-2 gap-6 h-full items-stretch">
-                        <div id="glassContainer" style="display: none;" class="h-full">
+                        <div id="glassContainer" style="display: none;" class="h-full flex flex-col">
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Glass / Glazing Type</label>
-                            <div class="collection-card active p-4 border-2 border-[#8EDB43] bg-[#f4fbf0] rounded-lg text-left transition-colors cursor-pointer flex flex-col justify-between h-full min-h-[8rem]" onclick="openVisualBrowser('glass')">
+                            <div class="collection-card active p-4 border-2 border-[#8EDB43] bg-[#f4fbf0] rounded-lg text-left transition-colors cursor-pointer flex flex-col justify-between flex-1 min-h-[8rem]" onclick="openVisualBrowser('glass')">
                                 <div class="mb-3">
                                     <h4 id="glassCardLabel" class="font-bold text-sm mb-1 text-[#1A1A1A] transition-colors">Solid Panel</h4>
                                     <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Selected Glass</p>
@@ -292,23 +302,30 @@
                     </div>
                     
                     <div id="slContainer" class="hidden pt-4 border-t border-slate-100 mt-4">
-                        <div class="grid grid-cols-3 gap-4">
-                            <div>
-                                <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Sidelite Model</label>
-                                    <button type="button" onclick="openVisualBrowser('sidelite')" class="text-[10px] text-slate-600 hover:text-slate-900 font-bold flex items-center transition-colors bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm uppercase tracking-wider">
-                                        <i class="fas fa-th mr-1"></i> Browse
+                        <select id="slModel" class="hidden" onchange="populateSideliteSizes()"></select>
+
+                        <div class="grid grid-cols-2 gap-6 h-full items-stretch">
+                            <div class="h-full flex flex-col">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Sidelite Model</label>
+                                <div class="collection-card active p-4 border-2 border-[#8EDB43] bg-[#f4fbf0] rounded-lg text-left transition-colors cursor-pointer flex flex-col justify-between flex-1 min-h-[8rem]" onclick="openVisualBrowser('sidelite')">
+                                    <div class="mb-3">
+                                        <h4 id="sideliteCardLabel" class="font-bold text-sm mb-1 text-[#1A1A1A] transition-colors">Select Sidelite</h4>
+                                        <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Selected Model</p>
+                                    </div>
+                                    <button type="button" class="browse-btn w-full py-2 bg-[#1A1A1A] text-[#8EDB43] rounded text-[10px] font-black uppercase tracking-widest transition-colors border border-[#1A1A1A] shadow-sm flex items-center justify-center">
+                                        <i class="fas fa-th mr-1"></i> Visual Browse
                                     </button>
                                 </div>
-                                <select id="slModel" onchange="populateSideliteSizes()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 mt-1">Sidelite Size</label>
-                                <select id="slSize" onchange="populateSideliteGlass()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 mt-1">Sidelite Glass</label>
-                                <select id="slGlass" onchange="runQuoteEngine()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
+                            <div class="flex flex-col gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 mt-1">Sidelite Size</label>
+                                    <select id="slSize" onchange="populateSideliteGlass()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Sidelite Glass</label>
+                                    <select id="slGlass" onchange="runQuoteEngine()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -337,9 +354,9 @@
                     <select id="addOns" class="hidden" onchange="syncCustomCards(); runQuoteEngine();"></select>
 
                     <div id="standardAddonsContainer" class="grid grid-cols-3 gap-6 mb-4 items-stretch">
-                        <div id="addOnContainer" style="display: none;" class="col-span-2 h-full">
+                        <div id="addOnContainer" style="display: none;" class="col-span-2 h-full flex flex-col">
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Decorative Grille / Speakeasy Mask</label>
-                            <div class="collection-card active p-4 border-2 border-[#8EDB43] bg-[#f4fbf0] rounded-lg text-left transition-colors cursor-pointer flex flex-col justify-between h-full min-h-[8rem]" onclick="openVisualBrowser('addon')">
+                            <div class="collection-card active p-4 border-2 border-[#8EDB43] bg-[#f4fbf0] rounded-lg text-left transition-colors cursor-pointer flex flex-col justify-between flex-1 min-h-[8rem]" onclick="openVisualBrowser('addon')">
                                 <div class="mb-3">
                                     <h4 id="addonCardLabel" class="font-bold text-sm mb-1 text-[#1A1A1A] transition-colors">None</h4>
                                     <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Selected Add-on</p>
@@ -352,7 +369,7 @@
 
                         <div id="casingAdderContainer" style="display: none;" class="col-span-1">
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Prehang Interior Casing Adders</label>
-                            <select id="casingAdder" onchange="runQuoteEngine()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm bg-slate-50">
+                            <select id="casingAdder" onchange="runQuoteEngine()" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm bg-slate-50 flex-1">
                                 <option value="0">None (Standard Frame)</option>
                                 <option value="int_casing">Add Interior Casing</option>
                                 <option value="1x4_casing">Add 1x4 Casing</option>
@@ -1254,6 +1271,12 @@
         }
 
         function syncCustomCards() {
+            const dmSel = document.getElementById('doorModel');
+            const dmCard = document.getElementById('doorModelCardLabel');
+            if (dmSel && dmCard) {
+                dmCard.innerText = (dmSel.options.length > 0 && dmSel.selectedIndex >= 0) ? dmSel.options[dmSel.selectedIndex].text.split(' (Pg.')[0] : 'Select Door Model';
+            }
+
             const gSel = document.getElementById('doorGlass');
             const gCard = document.getElementById('glassCardLabel');
             if(gSel && gCard) {
@@ -1264,6 +1287,12 @@
             const fCard = document.getElementById('finishCardLabel');
             if(fSel && fCard) {
                 fCard.innerText = (fSel.options.length > 0 && fSel.selectedIndex >= 0) ? fSel.options[fSel.selectedIndex].text : 'Unfinished (Slab/Prehung)';
+            }
+            
+            const slSel = document.getElementById('slModel');
+            const slCard = document.getElementById('sideliteCardLabel');
+            if(slSel && slCard) {
+                slCard.innerText = (slSel.options.length > 0 && slSel.selectedIndex >= 0) ? slSel.options[slSel.selectedIndex].text : 'Select Sidelite';
             }
 
             const aSel = document.getElementById('addOns');
