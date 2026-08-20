@@ -438,11 +438,15 @@
                 </div>
 
                 <div class="overflow-y-auto custom-scroll flex-1 bg-[#222222]">
-                    <div id="preview-wrapper" class="p-4 border-b border-[#333333] bg-[#1A1A1A] flex justify-center gap-3">
-                        <div id="preview-grid-catalog" class="flex justify-center gap-3 w-full">
+                    <div id="preview-wrapper" class="p-4 border-b border-[#333333] bg-[#1A1A1A] flex justify-center flex-wrap gap-3">
+                        <div id="preview-grid-catalog" class="flex justify-center flex-wrap gap-3 w-full">
                             <div class="preview-box border-[#333333] bg-[#222222]">
                                 <div class="preview-fallback"><i class="fas fa-door-closed text-base mb-1 text-slate-500"></i>Door</div>
                                 <img id="preview-door" src="" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
+                            </div>
+                            <div class="preview-box border-[#333333] bg-[#222222]" id="preview-container-sidelite" style="display:none;">
+                                <div class="preview-fallback"><i class="fas fa-columns text-base mb-1 text-slate-500"></i>Sidelite</div>
+                                <img id="preview-sidelite" src="" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
                             </div>
                             <div class="preview-box border-[#333333] bg-[#222222]" id="preview-container-glass" style="display:none;">
                                 <div class="preview-fallback"><i class="fas fa-border-all text-base mb-1 text-slate-500"></i>Glass</div>
@@ -2164,6 +2168,12 @@
             let slDesc = "";
             let slQty = 0;
             
+            const matFolder = currentMaterial === 'wood' ? 'wood' : 'fiberglass';
+            
+            const sideliteImgEl = document.getElementById('preview-sidelite');
+            const sideliteContainer = document.getElementById('preview-container-sidelite');
+            let urlSidelite = '';
+
             if (layout.includes('SL') && currentlySelectedSidelite) {
                 const slSizeCode = document.getElementById('slSize').value;
                 const slData = currentlySelectedSidelite.sizes[slSizeCode] ? currentlySelectedSidelite.sizes[slSizeCode].prices : null;
@@ -2181,7 +2191,14 @@
                     
                     sideliteNet = (slListPrice * slQty) * appSettings.multiplier;
                     slDesc = `${slQty}x ${currentlySelectedSidelite.name} (${slSizeCode}) - ${slGlass}`;
+                    
+                    const safeSlName = slugify(currentlySelectedSidelite.name);
+                    urlSidelite = `${REPO_BASE_URL}images/${matFolder}/sidelite/${safeSlName}.jpg`;
+                    sideliteImgEl.src = urlSidelite;
+                    sideliteContainer.style.display = 'flex';
                 }
+            } else {
+                sideliteContainer.style.display = 'none';
             }
 
             const unitMaterialsDealerCost = slabNet + sideliteNet + addOnsNet + prehangNet;
@@ -2275,7 +2292,6 @@
             
             document.getElementById('sku-display').innerText = `SKU: ${sku}`;
 
-            const matFolder = currentMaterial === 'wood' ? 'wood' : 'fiberglass';
             const doorImgEl = document.getElementById('preview-door');
             const safeDoorName = slugify(currentlySelectedModel.name);
             doorImgEl.src = `${REPO_BASE_URL}images/${matFolder}/doors/${safeDoorName}.jpg`;
@@ -2332,7 +2348,7 @@
                 modelName: currentlySelectedModel.name, 
                 collection: `${currentMaterial === 'wood' ? 'Solid Wood' : 'Fiberglass'} - ${currentCollection}`,
                 layout, glass, finish, addonsDesc, laborDesc, slDesc, doorHanding,
-                urlDoor: doorImgEl.src, urlGlass: glassImgEl.src, urlFinish, urlAddon,
+                urlDoor: doorImgEl.src, urlSidelite, urlGlass: glassImgEl.src, urlFinish, urlAddon,
                 isUnfinished,
                 hoelscherUnits: hUnits,
                 isVendorPrehang: isVendorPrehang,
@@ -2646,6 +2662,9 @@
                     <div class="col-span-3 flex flex-col gap-4">
             `;
 
+            if (state.urlSidelite) {
+                html += `<div class="preview-swatch-large"><div class="preview-fallback"><i class="fas fa-columns text-2xl text-slate-300 mb-1"></i><span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Sidelite</span></div><img src="${state.urlSidelite}" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')"></div>`;
+            }
             if (state.urlGlass) {
                 html += `<div class="preview-swatch-large"><div class="preview-fallback"><i class="fas fa-border-all text-2xl text-slate-300 mb-1"></i><span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Glass</span></div><img src="${state.urlGlass}" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')"></div>`;
             }
