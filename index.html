@@ -1468,7 +1468,7 @@
                 if(sideliteDb) {
                     sideliteDb.forEach((sl, index) => {
                         const safeSlName = slugify(sl.name);
-                        const imgSrc = `${REPO_BASE_URL}images/${matFolder}/sidelites/${safeSlName}.jpg`;
+                        const imgSrc = `${REPO_BASE_URL}images/${matFolder}/sidelite/${safeSlName}.jpg`;
                         
                         const card = document.createElement('div');
                         card.className = "bg-[#222] border border-[#444] rounded-xl overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
@@ -2229,7 +2229,7 @@
                     slDesc = `${slQty}x ${currentlySelectedSidelite.name} (${slSizeCode}) - ${slGlass}`;
                     
                     const safeSlName = slugify(currentlySelectedSidelite.name);
-                    urlSidelite = `${REPO_BASE_URL}images/${matFolder}/sidelites/${safeSlName}.jpg`;
+                    urlSidelite = `${REPO_BASE_URL}images/${matFolder}/sidelite/${safeSlName}.jpg`;
                     sideliteImgEl.src = urlSidelite;
                     sideliteContainer.style.display = 'flex';
                 }
