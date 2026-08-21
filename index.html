@@ -309,8 +309,9 @@
                     
                     <div id="slContainer" class="hidden pt-4 border-t border-slate-100 mt-4">
                         <select id="slModel" class="hidden" onchange="populateSideliteSizes()"></select>
+                        <select id="slGlass" class="hidden" onchange="syncCustomCards(); runQuoteEngine();"></select>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full items-stretch">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full items-stretch">
                             <div class="h-full flex flex-col">
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Sidelite Model</label>
                                 <div class="collection-card active p-4 border-2 border-[#8EDB43] bg-[#f4fbf0] rounded-lg text-left transition-colors cursor-pointer flex flex-col justify-between flex-1 min-h-[8rem]" onclick="openVisualBrowser('sidelite')">
@@ -323,14 +324,22 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Sidelite Size</label>
-                                    <select id="slSize" onchange="populateSideliteGlass()" class="w-full p-3 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Sidelite Glass</label>
-                                    <select id="slGlass" onchange="runQuoteEngine()" class="w-full p-3 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
+                            
+                            <div class="h-full flex flex-col justify-start">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 mt-1 md:mt-0">Sidelite Size</label>
+                                <select id="slSize" onchange="populateSideliteGlass()" class="w-full p-3 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50"></select>
+                            </div>
+
+                            <div class="h-full flex flex-col">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 mt-1 md:mt-0">Sidelite Glass</label>
+                                <div class="collection-card active p-4 border-2 border-[#8EDB43] bg-[#f4fbf0] rounded-lg text-left transition-colors cursor-pointer flex flex-col justify-between flex-1 min-h-[8rem]" onclick="openVisualBrowser('slGlass')">
+                                    <div class="mb-3">
+                                        <h4 id="slGlassCardLabel" class="font-bold text-sm mb-1 text-[#1A1A1A] transition-colors">Select Glass</h4>
+                                        <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Selected Glass</p>
+                                    </div>
+                                    <button type="button" class="browse-btn w-full py-2 bg-[#1A1A1A] text-[#8EDB43] rounded text-[10px] font-black uppercase tracking-widest transition-colors border border-[#1A1A1A] shadow-sm flex items-center justify-center mt-auto">
+                                        <i class="fas fa-th mr-1"></i> Visual Browse
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1330,6 +1339,12 @@
             if(slSel && slCard) {
                 slCard.innerText = (slSel.options.length > 0 && slSel.selectedIndex >= 0) ? slSel.options[slSel.selectedIndex].text : 'Select Sidelite';
             }
+            
+            const slgSel = document.getElementById('slGlass');
+            const slgCard = document.getElementById('slGlassCardLabel');
+            if(slgSel && slgCard) {
+                slgCard.innerText = (slgSel.options.length > 0 && slgSel.selectedIndex >= 0) ? slgSel.options[slgSel.selectedIndex].text : 'Select Glass';
+            }
 
             const aSel = document.getElementById('addOns');
             const aCard = document.getElementById('addonCardLabel');
@@ -1511,6 +1526,31 @@
                     `;
                     grid.appendChild(card);
                 });
+            } else if (type === 'slGlass') {
+                document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Sidelite Glass`;
+                grid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto w-full px-2 md:px-4";
+                
+                const glassSelect = document.getElementById('slGlass');
+                Array.from(glassSelect.options).forEach((opt) => {
+                    const glassName = opt.value;
+                    const safeGlassName = slugify(glassName);
+                    const isSolidPanel = glassName === 'Solid Panel';
+                    const imgSrc = isSolidPanel ? '' : `${REPO_BASE_URL}images/${matFolder}/glass/${safeGlassName}.jpg`;
+                    
+                    const card = document.createElement('div');
+                    card.className = "bg-[#222] border border-[#444] rounded-xl overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
+                    card.onclick = () => { selectFromVisualBrowser('slGlass', glassName); };
+                    
+                    card.innerHTML = `
+                        <div class="w-full aspect-[1/2.2] bg-[#1A1A1A] relative flex items-center justify-center p-4 overflow-hidden">
+                            ${isSolidPanel ? '<i class="fas fa-ban text-6xl text-slate-600"></i>' : `<div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest">Image</div><img src="${imgSrc}" class="w-full h-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">`}
+                        </div>
+                        <div class="p-4 md:p-5 border-t border-[#444] bg-[#222] flex items-center justify-center">
+                            <p class="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors">${glassName}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
             } else if (type === 'finish') {
                 document.getElementById('visualBrowserTitle').innerHTML = `<i class="fas fa-th text-[#8EDB43] mr-2"></i> Browse Finish & Stains`;
                 grid.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 max-w-6xl mx-auto w-full px-2 md:px-4";
@@ -1581,6 +1621,10 @@
                 populateSideliteSizes();
             } else if (type === 'glass') {
                 document.getElementById('doorGlass').value = value;
+                syncCustomCards();
+                runQuoteEngine();
+            } else if (type === 'slGlass') {
+                document.getElementById('slGlass').value = value;
                 syncCustomCards();
                 runQuoteEngine();
             } else if (type === 'finish') {
@@ -1854,6 +1898,7 @@
                 slGlassSelect.appendChild(opt);
             });
 
+            syncCustomCards();
             runQuoteEngine();
         }
 
@@ -2229,7 +2274,7 @@
                     slDesc = `${slQty}x ${currentlySelectedSidelite.name} (${slSizeCode}) - ${slGlass}`;
                     
                     const safeSlName = slugify(currentlySelectedSidelite.name);
-                    urlSidelite = `${REPO_BASE_URL}images/${matFolder}/sidelite/${safeSlName}.jpg`;
+                    urlSidelite = `${REPO_BASE_URL}images/${matFolder}/sidelites/${safeSlName}.jpg`;
                     sideliteImgEl.src = urlSidelite;
                     sideliteContainer.style.display = 'flex';
                 }
@@ -2786,7 +2831,38 @@
             container.appendChild(card);
         }
 
-        // Remaining logic retained exactly as original
+        function switchTab(tabId) {
+            document.getElementById('quote-tab').style.display = 'none';
+            document.getElementById('proposal-tab').style.display = 'none';
+            document.getElementById('settings-tab').style.display = 'none';
+            
+            document.getElementById('nav-quote').classList.remove('active', 'text-[#8EDB43]');
+            document.getElementById('nav-quote').classList.add('text-slate-400');
+            
+            document.getElementById('nav-proposal').classList.remove('active', 'text-[#8EDB43]');
+            document.getElementById('nav-proposal').classList.add('text-slate-400');
+            
+            document.getElementById('nav-settings').classList.remove('active', 'text-[#8EDB43]');
+            document.getElementById('nav-settings').classList.add('text-slate-400');
+
+            if (tabId === 'quote-tab') {
+                document.getElementById('quote-tab').style.display = 'grid';
+                document.getElementById('nav-quote').classList.add('active', 'text-[#8EDB43]');
+                document.getElementById('nav-quote').classList.remove('text-slate-400');
+            } else if (tabId === 'proposal-tab') {
+                document.getElementById('proposal-tab').style.display = 'flex';
+                document.getElementById('proposal-tab').classList.add('flex-col');
+                document.getElementById('nav-proposal').classList.add('active', 'text-[#8EDB43]');
+                document.getElementById('nav-proposal').classList.remove('text-slate-400');
+            } else if (tabId === 'settings-tab') {
+                document.getElementById('settings-tab').style.display = 'block';
+                document.getElementById('nav-settings').classList.add('active', 'text-[#8EDB43]');
+                document.getElementById('nav-settings').classList.remove('text-slate-400');
+                renderSettingsUI();
+                populateEditModels();
+                renderSettingsSavedQuotes();
+            }
+        }
     </script>
 </body>
 </html>
