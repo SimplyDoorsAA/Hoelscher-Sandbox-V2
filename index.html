@@ -36,6 +36,24 @@
             flex-wrap: wrap;
         }
 
+        .ui-toggle {
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .ui-toggle:hover { border-color: #cbd5e1; background-color: #f8fafc; }
+        .ui-toggle.active { border-color: #8EDB43; background-color: #f4fbf0; box-shadow: 0 0 10px rgba(142,219,67,0.15); }
+        .ui-toggle img { height: 3.5rem; margin-bottom: 0.5rem; object-fit: contain; }
+        .ui-toggle span { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b; }
+
         .preview-box {
             position: relative;
             height: 6rem;
@@ -276,35 +294,91 @@
                         <span class="bg-[#8EDB43] text-[#1A1A1A] w-6 h-6 rounded-full flex items-center justify-center text-xs font-black mr-3 shrink-0">4</span>
                         <h2 class="text-xs font-black text-slate-800 uppercase tracking-widest">System Configuration & Sidelites</h2>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">System Layout</label>
-                            <select id="systemLayout" onchange="handleLayoutChange()" class="w-full p-3 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50">
-                                <option value="Slab Only" selected>Slab Only (No Frame)</option>
-                                <option value="Single">Single Door System</option>
-                                <option value="Single + 1 SL">Single w/ 1 Sidelite</option>
-                                <option value="Single + 2 SL">Single w/ 2 Sidelites</option>
-                                <option value="Double">Double Door System</option>
-                            </select>
+
+                    <div class="mb-6">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">1. System Layout</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div id="btn-lay-slab" class="ui-toggle active" onclick="selectLayout('slab')">
+                                <img src="images/configuration/ui_icons/layout_slab.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-door-closed text-3xl mb-2 text-slate-400\'></i>'">
+                                <span>Slab Only</span>
+                            </div>
+                            <div id="btn-lay-single" class="ui-toggle" onclick="selectLayout('single')">
+                                <img src="images/configuration/ui_icons/layout_single.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-door-open text-3xl mb-2 text-slate-400\'></i>'">
+                                <span>Single Door</span>
+                            </div>
+                            <div id="btn-lay-double" class="ui-toggle" onclick="selectLayout('double')">
+                                <img src="images/configuration/ui_icons/layout_double.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-columns text-3xl mb-2 text-slate-400\'></i>'">
+                                <span>Double Door</span>
+                            </div>
+                            <div id="btn-lay-sidelite" class="ui-toggle" onclick="selectLayout('sidelite')">
+                                <img src="images/configuration/ui_icons/layout_sidelites.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-border-all text-3xl mb-2 text-slate-400\'></i>'">
+                                <span>W/ Sidelite(s)</span>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Handing & Swing</label>
-                            <select id="doorHanding" onchange="runQuoteEngine()" class="w-full p-3 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50">
-                                <option value="N/A (Slab)" selected>N/A (Slab Only)</option>
-                                <option value="Left Hand (LH) Inswing">Left Hand (LH) Inswing</option>
-                                <option value="Right Hand (RH) Inswing">Right Hand (RH) Inswing</option>
-                                <option value="Left Hand (LH) Outswing">Left Hand (LH) Outswing</option>
-                                <option value="Right Hand (RH) Outswing">Right Hand (RH) Outswing</option>
-                            </select>
+                    </div>
+
+                    <div id="row-slpos" class="hidden mb-6 border-t border-slate-100 pt-4">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">2. Sidelite Position</label>
+                        <div class="grid grid-cols-3 gap-4">
+                             <div id="btn-slpos-left" class="ui-toggle" onclick="selectSlPos('left')">
+                                 <img src="images/configuration/ui_icons/sl_left.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-caret-left text-3xl mb-2 text-slate-400\'></i>'">
+                                 <span>1 Left</span>
+                             </div>
+                             <div id="btn-slpos-right" class="ui-toggle" onclick="selectSlPos('right')">
+                                 <img src="images/configuration/ui_icons/sl_right.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-caret-right text-3xl mb-2 text-slate-400\'></i>'">
+                                 <span>1 Right</span>
+                             </div>
+                             <div id="btn-slpos-both" class="ui-toggle" onclick="selectSlPos('both')">
+                                 <img src="images/configuration/ui_icons/sl_both.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-arrows-alt-h text-3xl mb-2 text-slate-400\'></i>'">
+                                 <span>Both Sides</span>
+                             </div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Jamb Depth</label>
-                            <select id="jambDepth" onchange="runQuoteEngine()" class="w-full p-3 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50">
-                                <option value="N/A" selected>N/A (Slab Only)</option>
-                                <option value="4 9/16">4-9/16" Standard Jamb</option>
-                                <option value="6 9/16">6-9/16" Wide Jamb</option>
-                            </select>
+                    </div>
+
+                    <div id="row-handing" class="hidden mb-6 border-t border-slate-100 pt-4">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3" id="label-handing">3. Door Handing</label>
+                        <div class="grid grid-cols-2 gap-4" id="grid-handing-single">
+                             <div id="btn-handing-lh" class="ui-toggle" onclick="selectHanding('lh')">
+                                 <img src="images/configuration/ui_icons/handing_lh.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-hand-point-left text-3xl mb-2 text-slate-400\'></i>'">
+                                 <span>Left Hand</span>
+                             </div>
+                             <div id="btn-handing-rh" class="ui-toggle" onclick="selectHanding('rh')">
+                                 <img src="images/configuration/ui_icons/handing_rh.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-hand-point-right text-3xl mb-2 text-slate-400\'></i>'">
+                                 <span>Right Hand</span>
+                             </div>
                         </div>
+                        <div class="grid grid-cols-2 gap-4 hidden" id="grid-handing-double">
+                             <div id="btn-handing-lha" class="ui-toggle" onclick="selectHanding('lha')">
+                                 <img src="images/configuration/ui_icons/active_lh.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-hand-pointer text-3xl mb-2 text-slate-400\'></i>'">
+                                 <span>Left Active</span>
+                             </div>
+                             <div id="btn-handing-rha" class="ui-toggle" onclick="selectHanding('rha')">
+                                 <img src="images/configuration/ui_icons/active_rh.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-hand-pointer text-3xl mb-2 text-slate-400\'></i>'">
+                                 <span>Right Active</span>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div id="row-swing" class="hidden mb-6 border-t border-slate-100 pt-4">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">4. Door Swing</label>
+                        <div class="grid grid-cols-2 gap-4">
+                             <div id="btn-swing-in" class="ui-toggle" onclick="selectSwing('in')">
+                                 <img src="images/configuration/ui_icons/swing_in.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-sign-in-alt text-3xl mb-2 text-slate-400\'></i>'">
+                                 <span>Inswing</span>
+                             </div>
+                             <div id="btn-swing-out" class="ui-toggle" onclick="selectSwing('out')">
+                                 <img src="images/configuration/ui_icons/swing_out.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-sign-out-alt text-3xl mb-2 text-slate-400\'></i>'">
+                                 <span>Outswing</span>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div id="row-jamb" class="hidden border-t border-slate-100 pt-4 mb-4">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Jamb Depth</label>
+                        <select id="jambDepth" onchange="runQuoteEngine()" class="w-full md:w-1/2 p-3 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50">
+                            <option value="4 9/16" selected>4-9/16" Standard Jamb</option>
+                            <option value="6 9/16">6-9/16" Wide Jamb</option>
+                        </select>
                     </div>
                     
                     <div id="slContainer" class="hidden pt-4 border-t border-slate-100 mt-4">
@@ -407,40 +481,6 @@
                 </section>
             </div>
 
-            <div id="builder-custom" class="hidden space-y-6">
-                <section class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-slate-200">
-                    <div class="flex items-center mb-6 border-b border-slate-100 pb-4">
-                        <span class="bg-[#8EDB43] text-[#1A1A1A] w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3 shadow-sm shrink-0"><i class="fas fa-hammer"></i></span>
-                        <div>
-                            <h2 class="text-sm font-black text-slate-800 uppercase tracking-widest">Custom Line Item Details</h2>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Override catalog configurations</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Item Title</label>
-                            <input type="text" id="customTitle" oninput="runQuoteEngine()" placeholder="e.g. Custom Sill Modification" class="w-full p-3 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-bold bg-slate-50 text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Proposal Description</label>
-                            <textarea id="customDesc" oninput="runQuoteEngine()" rows="4" placeholder="Describe the specific scope of work, materials, or exceptions. This exact text will print on the final customer proposal..." class="w-full p-3 border border-slate-300 rounded focus:border-[#8EDB43] outline-none text-sm font-medium bg-slate-50 text-slate-700"></textarea>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Net Material Cost ($)</label>
-                                <div class="flex items-center"><span class="bg-slate-200 px-4 py-3 border border-r-0 border-slate-300 rounded-l text-sm text-slate-600 font-bold">$</span><input type="number" id="customMatCost" placeholder="0.00" min="0" oninput="runQuoteEngine()" class="w-full p-3 border border-slate-300 rounded-r focus:border-[#8EDB43] outline-none text-base bg-white font-mono text-slate-800"></div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Net Labor Cost ($)</label>
-                                <div class="flex items-center"><span class="bg-slate-200 px-4 py-3 border border-r-0 border-slate-300 rounded-l text-sm text-slate-600 font-bold">$</span><input type="number" id="customLabCost" placeholder="0.00" min="0" oninput="runQuoteEngine()" class="w-full p-3 border border-slate-300 rounded-r focus:border-[#8EDB43] outline-none text-base bg-white font-mono text-slate-800"></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
         </div>
 
         <div class="w-full lg:col-span-4 lg:sticky top-[80px] flex flex-col gap-6 self-start h-auto lg:h-[calc(100vh-100px)]">
@@ -455,7 +495,11 @@
                 <div class="overflow-y-auto custom-scroll flex-1 bg-[#222222]">
                     <div id="preview-wrapper" class="p-4 border-b border-[#333333] bg-[#1A1A1A] flex justify-center flex-wrap gap-3">
                         <div id="preview-grid-catalog" class="flex justify-center flex-wrap gap-3 w-full">
-                            <div class="preview-box border-[#333333] bg-[#222222]">
+                            <div class="preview-box border-[#333333] bg-[#222222]" id="preview-container-schematic" style="width: 100%; height: 12rem; display:none;">
+                                <div class="preview-fallback"><i class="fas fa-drafting-compass text-3xl mb-2 text-slate-500"></i>Schematic</div>
+                                <img id="preview-schematic" src="" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
+                            </div>
+                            <div class="preview-box border-[#333333] bg-[#222222]" id="preview-container-door">
                                 <div class="preview-fallback"><i class="fas fa-door-closed text-base mb-1 text-slate-500"></i>Door</div>
                                 <img id="preview-door" src="" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
                             </div>
@@ -920,9 +964,7 @@
         const REPO_BASE_URL = "https://simplydoorsaa.github.io/Hoelscher-Sandbox-V2/";
 
         let appSettings = {
-            multiplier: 0.48,
-            taxRate: 8.25,
-            ccRate: 3.0,
+            multiplier: 0.48, taxRate: 8.25, ccRate: 3.0,
             labor: { std: 450, sl: 650, dbl: 800 },
             addons: { maskList: 207, grilleList: 440 },
             prehang: { sgl68: 125, sgl80: 150, dbl68: 320, dbl80: 340, jambWide: 10 },
@@ -939,6 +981,11 @@
         let editingIndex = null;
         let currentBuilderMode = 'catalog'; 
         let isCustomerView = false;
+
+        let sysLayout = 'slab'; 
+        let sysSlPos = ''; 
+        let sysHanding = ''; 
+        let sysSwing = ''; 
 
         function slugify(text) {
             if (!text) return '';
@@ -1028,10 +1075,6 @@
             applyPricingPatches(appSettings.db); 
             loadSavedQuotesFromStorage();
 
-            document.getElementById('systemLayout').value = 'Slab Only';
-            document.getElementById('doorHanding').value = 'N/A (Slab)';
-            document.getElementById('jambDepth').value = 'N/A';
-            
             if (appSettings.db.fiberglass && Object.keys(appSettings.db.fiberglass).length > 0) {
                 setMaterial('fiberglass');
             }
@@ -1040,8 +1083,221 @@
             updateLaborDropdowns();
             closeCatalogModal();
             closeVisualBrowser();
-            runQuoteEngine();
+            
+            selectLayout('slab');
         };
+
+        function selectLayout(layout) {
+            sysLayout = layout;
+            
+            document.getElementById('btn-lay-slab').classList.remove('active');
+            document.getElementById('btn-lay-single').classList.remove('active');
+            document.getElementById('btn-lay-double').classList.remove('active');
+            document.getElementById('btn-lay-sidelite').classList.remove('active');
+            document.getElementById(`btn-lay-${layout}`).classList.add('active');
+
+            const isBarn = currentlySelectedModel && (currentlySelectedModel.barn || currentCollection === 'Barn Doors');
+            if(isBarn && layout !== 'slab') {
+                showToast('Barn doors are Slab Only.', true);
+                selectLayout('slab');
+                return;
+            }
+
+            sysSlPos = '';
+            sysHanding = '';
+            sysSwing = '';
+
+            document.getElementById('row-slpos').classList.add('hidden');
+            document.getElementById('row-handing').classList.add('hidden');
+            document.getElementById('row-swing').classList.add('hidden');
+            document.getElementById('row-jamb').classList.add('hidden');
+            
+            document.querySelectorAll('#row-slpos .ui-toggle').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('#row-handing .ui-toggle').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('#row-swing .ui-toggle').forEach(el => el.classList.remove('active'));
+
+            if (layout === 'sidelite') {
+                document.getElementById('row-slpos').classList.remove('hidden');
+            } else if (layout === 'single') {
+                document.getElementById('row-handing').classList.remove('hidden');
+                document.getElementById('grid-handing-single').classList.remove('hidden');
+                document.getElementById('grid-handing-double').classList.add('hidden');
+                
+                selectHanding('lh');
+                selectSwing('in');
+            } else if (layout === 'double') {
+                document.getElementById('row-handing').classList.remove('hidden');
+                document.getElementById('grid-handing-single').classList.add('hidden');
+                document.getElementById('grid-handing-double').classList.remove('hidden');
+                
+                selectHanding('lha');
+                selectSwing('in');
+            }
+
+            applyToggleLogic();
+            runQuoteEngine();
+        }
+
+        function selectSlPos(pos) {
+            sysSlPos = pos;
+            document.getElementById('btn-slpos-left').classList.remove('active');
+            document.getElementById('btn-slpos-right').classList.remove('active');
+            document.getElementById('btn-slpos-both').classList.remove('active');
+            document.getElementById(`btn-slpos-${pos}`).classList.add('active');
+
+            document.getElementById('row-handing').classList.remove('hidden');
+            document.getElementById('grid-handing-single').classList.remove('hidden');
+            document.getElementById('grid-handing-double').classList.add('hidden');
+            
+            if(!sysHanding) selectHanding('lh');
+            if(!sysSwing) selectSwing('in');
+            
+            applyToggleLogic();
+            runQuoteEngine();
+        }
+
+        function selectHanding(handing) {
+            sysHanding = handing;
+            document.querySelectorAll('#row-handing .ui-toggle').forEach(el => el.classList.remove('active'));
+            document.getElementById(`btn-handing-${handing}`).classList.add('active');
+
+            if (sysLayout !== 'slab') {
+                document.getElementById('row-swing').classList.remove('hidden');
+                document.getElementById('row-jamb').classList.remove('hidden');
+            }
+            
+            runQuoteEngine();
+        }
+
+        function selectSwing(swing) {
+            sysSwing = swing;
+            document.getElementById('btn-swing-in').classList.remove('active');
+            document.getElementById('btn-swing-out').classList.remove('active');
+            document.getElementById(`btn-swing-${swing}`).classList.add('active');
+            runQuoteEngine();
+        }
+
+        function applyToggleLogic() {
+            const slContainer = document.getElementById('slContainer');
+            if (sysLayout === 'sidelite') {
+                slContainer.classList.remove('hidden');
+                slContainer.classList.add('block');
+                
+                const slModelSelect = document.getElementById('slModel');
+                if(slModelSelect.options.length === 0) {
+                    const sideliteDb = currentMaterial === 'wood' ? appSettings.db.wood_sidelites : appSettings.db.fiberglass_sidelites;
+                    if(sideliteDb) {
+                        sideliteDb.forEach((sl, index) => {
+                            const opt = document.createElement('option');
+                            opt.value = index;
+                            opt.innerText = sl.name;
+                            if(index === 0) opt.selected = true;
+                            slModelSelect.appendChild(opt);
+                        });
+                    }
+                    populateSideliteSizes();
+                }
+            } else {
+                slContainer.classList.add('hidden');
+                slContainer.classList.remove('block');
+            }
+        }
+
+        function getDerivedSystemLayout() {
+            if(sysLayout === 'slab') return 'Slab Only';
+            if(sysLayout === 'single') return 'Single';
+            if(sysLayout === 'double') return 'Double';
+            if(sysLayout === 'sidelite') {
+                return sysSlPos === 'both' ? 'Single + 2 SL' : 'Single + 1 SL';
+            }
+            return 'Slab Only';
+        }
+
+        function getDerivedDoorHanding() {
+            if(sysLayout === 'slab') return 'N/A (Slab)';
+            
+            let handStr = '';
+            if(sysLayout === 'double') {
+                handStr = sysHanding === 'lha' ? 'Left Hand Active' : (sysHanding === 'rha' ? 'Right Hand Active' : '');
+            } else {
+                handStr = sysHanding === 'lh' ? 'Left Hand (LH)' : (sysHanding === 'rh' ? 'Right Hand (RH)' : '');
+            }
+            
+            let swingStr = sysSwing === 'in' ? 'Inswing' : (sysSwing === 'out' ? 'Outswing' : '');
+            
+            if(handStr && swingStr) return `${handStr} ${swingStr}`;
+            return ''; 
+        }
+
+        function getSchematicFilename() {
+            if (!sysSwing || !sysHanding) return '';
+            
+            let swingName = sysSwing === 'out' ? 'outswing' : 'inswing';
+            let handName = (sysHanding === 'lh' || sysHanding === 'lha') ? 'left' : 'right';
+
+            if (sysLayout === 'single') {
+                return `single_${swingName}_${handName}.jpg`;
+            } else if (sysLayout === 'double') {
+                return `double_${swingName}_${handName}.jpg`;
+            } else if (sysLayout === 'sidelite') {
+                if (sysSlPos === 'both') return `single_2_sidelite.jpg`;
+                let slPosName = sysSlPos === 'left' ? 'left' : 'right';
+                return `single_1_sidelite_${slPosName}.jpg`;
+            }
+            return '';
+        }
+
+        function setVisualTogglesFromConfig(layoutStr, handingStr) {
+            sysLayout = 'slab';
+            sysSlPos = '';
+            sysHanding = '';
+            sysSwing = '';
+            
+            if(layoutStr === 'Single') sysLayout = 'single';
+            else if(layoutStr === 'Double') sysLayout = 'double';
+            else if(layoutStr.includes('1 SL')) { sysLayout = 'sidelite'; sysSlPos = 'left'; }
+            else if(layoutStr.includes('2 SL')) { sysLayout = 'sidelite'; sysSlPos = 'both'; }
+
+            if(handingStr.includes('Left Hand Active')) sysHanding = 'lha';
+            else if(handingStr.includes('Right Hand Active')) sysHanding = 'rha';
+            else if(handingStr.includes('Left Hand (LH)')) sysHanding = 'lh';
+            else if(handingStr.includes('Right Hand (RH)')) sysHanding = 'rh';
+
+            if(handingStr.includes('Inswing')) sysSwing = 'in';
+            else if(handingStr.includes('Outswing')) sysSwing = 'out';
+
+            document.querySelectorAll('.ui-toggle').forEach(el => el.classList.remove('active'));
+            document.getElementById('row-slpos').classList.add('hidden');
+            document.getElementById('row-handing').classList.add('hidden');
+            document.getElementById('row-swing').classList.add('hidden');
+            document.getElementById('row-jamb').classList.add('hidden');
+
+            document.getElementById(`btn-lay-${sysLayout}`).classList.add('active');
+
+            if (sysLayout === 'sidelite') {
+                document.getElementById('row-slpos').classList.remove('hidden');
+                if(sysSlPos) document.getElementById(`btn-slpos-${sysSlPos}`).classList.add('active');
+            }
+            
+            if (sysLayout !== 'slab') {
+                document.getElementById('row-handing').classList.remove('hidden');
+                document.getElementById('row-swing').classList.remove('hidden');
+                document.getElementById('row-jamb').classList.remove('hidden');
+                
+                if (sysLayout === 'double') {
+                    document.getElementById('grid-handing-single').classList.add('hidden');
+                    document.getElementById('grid-handing-double').classList.remove('hidden');
+                } else {
+                    document.getElementById('grid-handing-single').classList.remove('hidden');
+                    document.getElementById('grid-handing-double').classList.add('hidden');
+                }
+
+                if(sysHanding) document.getElementById(`btn-handing-${sysHanding}`).classList.add('active');
+                if(sysSwing) document.getElementById(`btn-swing-${sysSwing}`).classList.add('active');
+            }
+
+            applyToggleLogic();
+        }
 
         function loadSettings() {
             try {
@@ -1483,7 +1739,7 @@
                 if(sideliteDb) {
                     sideliteDb.forEach((sl, index) => {
                         const safeSlName = slugify(sl.name);
-                        const imgSrc = `${REPO_BASE_URL}images/${matFolder}/sidelite/${safeSlName}.jpg`;
+                        const imgSrc = `${REPO_BASE_URL}images/${matFolder}/sidelites/${safeSlName}.jpg`;
                         
                         const card = document.createElement('div');
                         card.className = "bg-[#222] border border-[#444] rounded-xl overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
@@ -1706,23 +1962,23 @@
 
             const isBarn = currentlySelectedModel.barn || currentCollection === 'Barn Doors';
             const barnContainer = document.getElementById('barnHardwareContainer');
-            const handingSelect = document.getElementById('doorHanding');
             const jambSelect = document.getElementById('jambDepth');
             
             if (isBarn) {
                 barnContainer.classList.remove('hidden');
-                document.getElementById('systemLayout').value = 'Slab Only';
-                document.getElementById('systemLayout').disabled = true;
-                handingSelect.value = 'N/A (Slab)';
+                selectLayout('slab');
+                document.getElementById('btn-lay-single').classList.add('opacity-50', 'pointer-events-none');
+                document.getElementById('btn-lay-double').classList.add('opacity-50', 'pointer-events-none');
+                document.getElementById('btn-lay-sidelite').classList.add('opacity-50', 'pointer-events-none');
                 jambSelect.value = 'N/A';
                 populateBarnHardware();
             } else {
                 barnContainer.classList.add('hidden');
-                document.getElementById('systemLayout').disabled = false;
-                if (handingSelect.value === 'N/A (Slab)' && document.getElementById('systemLayout').value !== 'Slab Only') {
-                    handingSelect.value = 'Left Hand (LH) Inswing';
-                }
-                if (jambSelect.value === 'N/A' && document.getElementById('systemLayout').value !== 'Slab Only') {
+                document.getElementById('btn-lay-single').classList.remove('opacity-50', 'pointer-events-none');
+                document.getElementById('btn-lay-double').classList.remove('opacity-50', 'pointer-events-none');
+                document.getElementById('btn-lay-sidelite').classList.remove('opacity-50', 'pointer-events-none');
+                
+                if (jambSelect.value === 'N/A' && sysLayout !== 'slab') {
                     jambSelect.value = '4 9/16';
                 }
             }
@@ -1818,47 +2074,6 @@
 
             syncCustomCards();
             runQuoteEngine();
-        }
-
-        function handleLayoutChange() {
-            const layout = document.getElementById('systemLayout').value;
-            const slContainer = document.getElementById('slContainer');
-            const handingSelect = document.getElementById('doorHanding');
-            const jambSelect = document.getElementById('jambDepth');
-
-            if (layout === 'Slab Only') {
-                handingSelect.value = 'N/A (Slab)';
-                jambSelect.value = 'N/A';
-            } else {
-                if (handingSelect.value === 'N/A (Slab)' || !handingSelect.value) handingSelect.value = 'Left Hand (LH) Inswing';
-                if (jambSelect.value === 'N/A' || !jambSelect.value) jambSelect.value = '4 9/16';
-            }
-            
-            if (layout.includes('SL')) {
-                slContainer.classList.remove('hidden');
-                slContainer.classList.add('block');
-                
-                const slModelSelect = document.getElementById('slModel');
-                slModelSelect.innerHTML = '';
-                const sideliteDb = currentMaterial === 'wood' ? appSettings.db.wood_sidelites : appSettings.db.fiberglass_sidelites;
-                
-                if(sideliteDb) {
-                    sideliteDb.forEach((sl, index) => {
-                        const opt = document.createElement('option');
-                        opt.value = index;
-                        opt.innerText = sl.name;
-                        if(index === 0) opt.selected = true;
-                        slModelSelect.appendChild(opt);
-                    });
-                }
-                
-                populateSideliteSizes();
-            } else {
-                slContainer.classList.add('hidden');
-                slContainer.classList.remove('block');
-                currentlySelectedSidelite = null;
-                runQuoteEngine();
-            }
         }
 
         function populateSideliteSizes() {
@@ -1966,10 +2181,9 @@
                 handleSizeChange();
                 document.getElementById('doorGlass').value = cfg.glass;
                 document.getElementById('doorFinish').value = cfg.finish;
-                document.getElementById('systemLayout').value = cfg.layout;
-                handleLayoutChange();
-                document.getElementById('doorHanding').value = cfg.handing;
                 document.getElementById('jambDepth').value = cfg.jamb;
+                
+                setVisualTogglesFromConfig(cfg.layout, cfg.handing);
                 
                 if (cfg.layout.includes('SL')) {
                     document.getElementById('slModel').value = cfg.slModelIdx;
@@ -2097,7 +2311,9 @@
             }
 
             const doorSize = document.getElementById('doorSize').value;
-            if (!currentlySelectedModel || !doorSize) {
+            const derivedHanding = getDerivedDoorHanding();
+            
+            if (!currentlySelectedModel || !doorSize || (sysLayout !== 'slab' && !derivedHanding)) {
                 document.getElementById('priceRetail').innerText = "$0.00";
                 document.getElementById('costTotal').innerText = "$0.00";
                 document.getElementById('costSlab').innerText = "$0.00";
@@ -2133,12 +2349,11 @@
             const pricingData = sizeData.prices;
             
             const doorFinish = document.getElementById('doorFinish').value || 'Unfinished (Slab/Prehung)';
-            const doorHanding = document.getElementById('doorHanding').value || 'N/A (Slab)';
+            const layout = getDerivedSystemLayout();
             
             const finish = doorFinish;
             const isUnfinished = finish.includes('Unfinished');
             
-            const layout = document.getElementById('systemLayout').value || 'Slab Only';
             const isDouble = layout.includes('Double');
             const isSlabOnly = layout === 'Slab Only';
             const isBarn = currentlySelectedModel.barn || currentCollection === 'Barn Doors';
@@ -2373,6 +2588,17 @@
             
             document.getElementById('sku-display').innerText = `SKU: ${sku}`;
 
+            let urlSchematic = '';
+            if (sysLayout !== 'slab') {
+                urlSchematic = `${REPO_BASE_URL}images/configuration/schematics/${getSchematicFilename()}`;
+                document.getElementById('preview-schematic').src = urlSchematic;
+                document.getElementById('preview-container-schematic').style.display = 'flex';
+                document.getElementById('preview-container-door').style.display = 'none';
+            } else {
+                document.getElementById('preview-container-schematic').style.display = 'none';
+                document.getElementById('preview-container-door').style.display = 'flex';
+            }
+
             const doorImgEl = document.getElementById('preview-door');
             const safeDoorName = slugify(currentlySelectedModel.name);
             doorImgEl.src = `${REPO_BASE_URL}images/${matFolder}/doors/${safeDoorName}.jpg`;
@@ -2428,8 +2654,8 @@
                 lineLabor: unitLaborRetail * qty,
                 modelName: currentlySelectedModel.name, 
                 collection: `${currentMaterial === 'wood' ? 'Solid Wood' : 'Fiberglass'} - ${currentCollection}`,
-                layout, glass, finish, addonsDesc, laborDesc, slDesc, doorHanding,
-                urlDoor: doorImgEl.src, urlSidelite, urlGlass: glassImgEl.src, urlFinish, urlAddon,
+                layout, glass, finish, addonsDesc, laborDesc, slDesc, doorHanding: derivedHanding,
+                urlDoor: doorImgEl.src, urlSidelite, urlGlass: glassImgEl.src, urlFinish, urlAddon, urlSchematic,
                 isUnfinished,
                 hoelscherUnits: hUnits,
                 isVendorPrehang: isVendorPrehang,
@@ -2442,7 +2668,7 @@
                     glass: glass,
                     finish: doorFinish,
                     layout: layout,
-                    handing: doorHanding,
+                    handing: derivedHanding,
                     jamb: jamb,
                     slModelIdx: document.getElementById('slModel') ? document.getElementById('slModel').value : '',
                     slSize: document.getElementById('slSize') ? document.getElementById('slSize').value : '',
@@ -2736,47 +2962,56 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                    <div class="md:col-span-4">
-                        <div class="preview-hero">
-                            <div class="preview-fallback"><i class="fas fa-door-closed text-3xl mb-2 text-slate-300"></i>Door Model</div>
-                            ${state.urlDoor ? `<img src="${state.urlDoor}" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">` : ''}
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-1 md:col-span-3 gap-4 h-auto md:flex flex-col">
+                    <div class="md:col-span-6 flex flex-col justify-center items-center">
             `;
+            
+            // Schematic / Hero View fallback safely to Door 
+            if (state.urlSchematic) {
+                html += `<img src="${state.urlSchematic}" class="max-h-[350px] w-full object-contain mb-4" onerror="this.onerror=null; this.src='${state.urlDoor}';">`;
+            } else if (state.urlDoor) {
+                html += `<img src="${state.urlDoor}" class="max-h-[350px] w-full object-contain mb-4" onerror="this.style.display='none'">`;
+            }
 
+            // Sub Swatches Grid underneath
+            html += `<div class="flex justify-center flex-wrap gap-2 w-full mt-4">`;
+            
+            if (state.urlSchematic && state.urlDoor) {
+                html += `<div class="w-16 h-24 border border-slate-200 rounded bg-slate-50 relative"><img src="${state.urlDoor}" class="w-full h-full object-contain p-1" onerror="this.style.display='none'"></div>`;
+            }
             if (state.urlSidelite) {
-                html += `<div class="preview-swatch-large"><div class="preview-fallback"><i class="fas fa-columns text-2xl text-slate-300 mb-1"></i><span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Sidelite</span></div><img src="${state.urlSidelite}" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')"></div>`;
+                html += `<div class="w-16 h-24 border border-slate-200 rounded bg-slate-50 relative"><img src="${state.urlSidelite}" class="w-full h-full object-contain p-1" onerror="this.style.display='none'"></div>`;
             }
             if (state.urlGlass) {
-                html += `<div class="preview-swatch-large"><div class="preview-fallback"><i class="fas fa-border-all text-2xl text-slate-300 mb-1"></i><span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Glass</span></div><img src="${state.urlGlass}" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')"></div>`;
+                html += `<div class="w-16 h-24 border border-slate-200 rounded bg-slate-50 relative flex items-center justify-center"><img src="${state.urlGlass}" class="w-full h-full object-contain p-1" onerror="this.style.display='none'"></div>`;
+            } else if (state.glass === 'Solid Panel') {
+                html += `<div class="w-16 h-24 border border-slate-200 rounded bg-slate-50 relative flex flex-col items-center justify-center text-[8px] text-slate-400 font-bold uppercase text-center"><i class="fas fa-ban text-2xl mb-1"></i>Solid</div>`;
             }
             if (state.isUnfinished) {
-                html += `<div class="preview-swatch-large border-slate-200 bg-slate-100"><div class="preview-fallback"><i class="fas fa-paint-roller text-2xl mb-1 text-slate-300"></i><span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Unfinished</span></div></div>`;
+                html += `<div class="w-16 h-24 border border-slate-200 rounded bg-slate-50 relative flex flex-col items-center justify-center text-[8px] text-slate-400 font-bold uppercase text-center"><i class="fas fa-paint-roller text-2xl mb-1"></i>Raw</div>`;
             } else if (state.urlFinish) {
-                html += `<div class="preview-swatch-large"><div class="preview-fallback"><i class="fas fa-paint-roller text-2xl text-slate-300 mb-1"></i><span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Finish</span></div><img src="${state.urlFinish}" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')"></div>`;
+                html += `<div class="w-16 h-24 border border-slate-200 rounded bg-slate-50 relative flex items-center justify-center"><img src="${state.urlFinish}" class="w-full h-full object-cover p-1" onerror="this.style.display='none'"></div>`;
             }
             if (state.urlAddon) {
-                html += `<div class="preview-swatch-large"><div class="preview-fallback"><i class="fas fa-shield-alt text-2xl text-slate-300 mb-1"></i><span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Accent</span></div><img src="${state.urlAddon}" class="preview-img hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')"></div>`;
+                html += `<div class="w-16 h-24 border border-slate-200 rounded bg-slate-50 relative flex items-center justify-center"><img src="${state.urlAddon}" class="w-full h-full object-contain p-1" onerror="this.style.display='none'"></div>`;
             }
-
+            
             html += `
                     </div>
-                    
-                    <div class="md:col-span-5 grid grid-cols-1 gap-y-4 content-start text-sm md:pr-4">
-                        <div>
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Model</p>
-                            <p class="font-bold text-slate-800">${state.collection} - ${state.modelName}</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Dimensions</p>
-                            <p class="font-semibold text-slate-700">${state.unitStr}</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Configuration</p>
-                            <p class="font-semibold text-slate-700">${state.layout} / ${state.doorHanding}</p>
-                        </div>
+                </div>
+                
+                <div class="md:col-span-6 grid grid-cols-1 gap-y-4 content-start text-sm border-l border-slate-100 pl-0 md:pl-6 pt-4 md:pt-0 mt-4 md:mt-0">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Model</p>
+                        <p class="font-bold text-slate-800">${state.collection} - ${state.modelName}</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Dimensions</p>
+                        <p class="font-semibold text-slate-700">${state.unitStr}</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Configuration</p>
+                        <p class="font-semibold text-slate-700">${state.layout} / ${state.doorHanding}</p>
+                    </div>
             `;
             
             if (state.slDesc) {
