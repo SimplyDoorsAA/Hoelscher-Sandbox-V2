@@ -299,19 +299,23 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">1. System Layout</label>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div id="btn-lay-slab" class="ui-toggle active" onclick="selectLayout('slab')">
-                                <img src="images/configuration/ui_icons/layout_slab.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-door-closed text-3xl mb-2 text-slate-400\'></i>'">
+                                <i class="fas fa-door-closed text-3xl mb-2 text-slate-400 hidden"></i>
+                                <img src="images/configuration/ui_icons/layout_slab.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                 <span>Slab Only</span>
                             </div>
                             <div id="btn-lay-single" class="ui-toggle" onclick="selectLayout('single')">
-                                <img src="images/configuration/ui_icons/layout_single.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-door-open text-3xl mb-2 text-slate-400\'></i>'">
+                                <i class="fas fa-door-open text-3xl mb-2 text-slate-400 hidden"></i>
+                                <img src="images/configuration/ui_icons/layout_single.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                 <span>Single Door</span>
                             </div>
                             <div id="btn-lay-double" class="ui-toggle" onclick="selectLayout('double')">
-                                <img src="images/configuration/ui_icons/layout_double.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-columns text-3xl mb-2 text-slate-400\'></i>'">
+                                <i class="fas fa-columns text-3xl mb-2 text-slate-400 hidden"></i>
+                                <img src="images/configuration/ui_icons/layout_double.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                 <span>Double Door</span>
                             </div>
                             <div id="btn-lay-sidelite" class="ui-toggle" onclick="selectLayout('sidelite')">
-                                <img src="images/configuration/ui_icons/layout_sidelites.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-border-all text-3xl mb-2 text-slate-400\'></i>'">
+                                <i class="fas fa-border-all text-3xl mb-2 text-slate-400 hidden"></i>
+                                <img src="images/configuration/ui_icons/layout_sidelites.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                 <span>W/ Sidelite(s)</span>
                             </div>
                         </div>
@@ -321,15 +325,18 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">2. Sidelite Position</label>
                         <div class="grid grid-cols-3 gap-4">
                              <div id="btn-slpos-left" class="ui-toggle" onclick="selectSlPos('left')">
-                                 <img src="images/configuration/ui_icons/sl_left.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-caret-left text-3xl mb-2 text-slate-400\'></i>'">
+                                 <i class="fas fa-caret-left text-3xl mb-2 text-slate-400 hidden"></i>
+                                 <img src="images/configuration/ui_icons/sl_left.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                  <span>1 Left</span>
                              </div>
                              <div id="btn-slpos-right" class="ui-toggle" onclick="selectSlPos('right')">
-                                 <img src="images/configuration/ui_icons/sl_right.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-caret-right text-3xl mb-2 text-slate-400\'></i>'">
+                                 <i class="fas fa-caret-right text-3xl mb-2 text-slate-400 hidden"></i>
+                                 <img src="images/configuration/ui_icons/sl_right.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                  <span>1 Right</span>
                              </div>
                              <div id="btn-slpos-both" class="ui-toggle" onclick="selectSlPos('both')">
-                                 <img src="images/configuration/ui_icons/sl_both.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-arrows-alt-h text-3xl mb-2 text-slate-400\'></i>'">
+                                 <i class="fas fa-arrows-alt-h text-3xl mb-2 text-slate-400 hidden"></i>
+                                 <img src="images/configuration/ui_icons/sl_both.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                  <span>Both Sides</span>
                              </div>
                         </div>
@@ -339,21 +346,25 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3" id="label-handing">3. Door Handing</label>
                         <div class="grid grid-cols-2 gap-4" id="grid-handing-single">
                              <div id="btn-handing-lh" class="ui-toggle" onclick="selectHanding('lh')">
-                                 <img src="images/configuration/ui_icons/handing_lh.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-hand-point-left text-3xl mb-2 text-slate-400\'></i>'">
+                                 <i class="fas fa-hand-point-left text-3xl mb-2 text-slate-400 hidden"></i>
+                                 <img src="images/configuration/ui_icons/handing_lh.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                  <span>Left Hand</span>
                              </div>
                              <div id="btn-handing-rh" class="ui-toggle" onclick="selectHanding('rh')">
-                                 <img src="images/configuration/ui_icons/handing_rh.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-hand-point-right text-3xl mb-2 text-slate-400\'></i>'">
+                                 <i class="fas fa-hand-point-right text-3xl mb-2 text-slate-400 hidden"></i>
+                                 <img src="images/configuration/ui_icons/handing_rh.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                  <span>Right Hand</span>
                              </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 hidden" id="grid-handing-double">
                              <div id="btn-handing-lha" class="ui-toggle" onclick="selectHanding('lha')">
-                                 <img src="images/configuration/ui_icons/active_lh.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-hand-pointer text-3xl mb-2 text-slate-400\'></i>'">
+                                 <i class="fas fa-hand-pointer text-3xl mb-2 text-slate-400 hidden"></i>
+                                 <img src="images/configuration/ui_icons/active_lh.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                  <span>Left Active</span>
                              </div>
                              <div id="btn-handing-rha" class="ui-toggle" onclick="selectHanding('rha')">
-                                 <img src="images/configuration/ui_icons/active_rh.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-hand-pointer text-3xl mb-2 text-slate-400\'></i>'">
+                                 <i class="fas fa-hand-pointer text-3xl mb-2 text-slate-400 hidden"></i>
+                                 <img src="images/configuration/ui_icons/active_rh.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                  <span>Right Active</span>
                              </div>
                         </div>
@@ -363,11 +374,13 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">4. Door Swing</label>
                         <div class="grid grid-cols-2 gap-4">
                              <div id="btn-swing-in" class="ui-toggle" onclick="selectSwing('in')">
-                                 <img src="images/configuration/ui_icons/swing_in.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-sign-in-alt text-3xl mb-2 text-slate-400\'></i>'">
+                                 <i class="fas fa-sign-in-alt text-3xl mb-2 text-slate-400 hidden"></i>
+                                 <img src="images/configuration/ui_icons/swing_in.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                  <span>Inswing</span>
                              </div>
                              <div id="btn-swing-out" class="ui-toggle" onclick="selectSwing('out')">
-                                 <img src="images/configuration/ui_icons/swing_out.jpg" onerror="this.src=''; this.className='hidden'; this.parentElement.innerHTML+='<i class=\'fas fa-sign-out-alt text-3xl mb-2 text-slate-400\'></i>'">
+                                 <i class="fas fa-sign-out-alt text-3xl mb-2 text-slate-400 hidden"></i>
+                                 <img src="images/configuration/ui_icons/swing_out.jpg" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                                  <span>Outswing</span>
                              </div>
                         </div>
@@ -982,6 +995,7 @@
         let currentBuilderMode = 'catalog'; 
         let isCustomerView = false;
 
+        // Visual Toggle State
         let sysLayout = 'slab'; 
         let sysSlPos = ''; 
         let sysHanding = ''; 
@@ -1299,6 +1313,7 @@
             applyToggleLogic();
         }
 
+        // System Core Functions below
         function loadSettings() {
             try {
                 const saved = localStorage.getItem('simplyDoorsPricingDB_v2');
@@ -1722,8 +1737,8 @@
                     
                     card.innerHTML = `
                         <div class="w-full aspect-[1/2.2] bg-[#1A1A1A] relative flex items-center justify-center p-4">
-                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest">Image</div>
-                            <img src="${imgSrc}" class="w-full h-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
+                            <i class="fas fa-door-closed text-3xl text-slate-600 hidden fallback-icon"></i>
+                            <img src="${imgSrc}" class="w-full h-full object-contain relative z-10" onload="this.classList.remove('hidden')" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                         </div>
                         <div class="p-4 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
                             <p class="text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors leading-snug">${model.name}</p>
@@ -1747,8 +1762,8 @@
                         
                         card.innerHTML = `
                             <div class="w-full aspect-[1/4] bg-[#1A1A1A] relative flex items-center justify-center p-4">
-                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest transform -rotate-90 md:rotate-0">Image</div>
-                                <img src="${imgSrc}" class="w-full h-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">
+                                <i class="fas fa-columns text-3xl text-slate-600 hidden fallback-icon"></i>
+                                <img src="${imgSrc}" class="w-full h-full object-contain relative z-10" onload="this.classList.remove('hidden')" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">
                             </div>
                             <div class="p-4 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
                                 <p class="text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors leading-snug">${sl.name}</p>
@@ -1774,7 +1789,7 @@
                     
                     card.innerHTML = `
                         <div class="w-full aspect-[1/2.2] bg-[#1A1A1A] relative flex items-center justify-center p-4 overflow-hidden">
-                            ${isSolidPanel ? '<i class="fas fa-ban text-6xl text-slate-600"></i>' : `<div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest">Image</div><img src="${imgSrc}" class="w-full h-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">`}
+                            ${isSolidPanel ? '<i class="fas fa-ban text-6xl text-slate-600"></i>' : `<i class="fas fa-border-all text-3xl text-slate-600 hidden fallback-icon"></i><img src="${imgSrc}" class="w-full h-full object-contain relative z-10" onload="this.classList.remove('hidden')" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">`}
                         </div>
                         <div class="p-4 md:p-5 border-t border-[#444] bg-[#222] flex items-center justify-center">
                             <p class="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors">${glassName}</p>
@@ -1799,7 +1814,7 @@
                     
                     card.innerHTML = `
                         <div class="w-full aspect-[1/2.2] bg-[#1A1A1A] relative flex items-center justify-center p-4 overflow-hidden">
-                            ${isSolidPanel ? '<i class="fas fa-ban text-6xl text-slate-600"></i>' : `<div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest">Image</div><img src="${imgSrc}" class="w-full h-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">`}
+                            ${isSolidPanel ? '<i class="fas fa-ban text-6xl text-slate-600"></i>' : `<i class="fas fa-border-all text-3xl text-slate-600 hidden fallback-icon"></i><img src="${imgSrc}" class="w-full h-full object-contain relative z-10" onload="this.classList.remove('hidden')" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">`}
                         </div>
                         <div class="p-4 md:p-5 border-t border-[#444] bg-[#222] flex items-center justify-center">
                             <p class="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors">${glassName}</p>
@@ -1825,7 +1840,7 @@
                     
                     card.innerHTML = `
                         <div class="w-full aspect-[4/3] bg-[#1A1A1A] relative flex items-center justify-center overflow-hidden">
-                            ${isUnfinished ? '<i class="fas fa-paint-roller text-6xl text-slate-600"></i>' : `<div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest">Image</div><img src="${imgSrc}" class="w-full h-full object-cover relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">`}
+                            ${isUnfinished ? '<i class="fas fa-paint-roller text-6xl text-slate-600"></i>' : `<i class="fas fa-paint-roller text-3xl text-slate-600 hidden fallback-icon"></i><img src="${imgSrc}" class="w-full h-full object-cover relative z-10" onload="this.classList.remove('hidden')" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">`}
                         </div>
                         <div class="p-4 md:p-5 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
                             <p class="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors leading-snug">${finishName}</p>
@@ -1850,7 +1865,7 @@
                     
                     card.innerHTML = `
                         <div class="w-full aspect-square bg-[#1A1A1A] relative flex items-center justify-center p-6">
-                            ${addonVal === '0' ? '<i class="fas fa-ban text-6xl text-slate-600"></i>' : `<div class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-600 font-bold text-xs uppercase tracking-widest">Image</div><img src="${imgSrc}" class="w-full h-full object-contain relative z-10 hidden" onload="this.classList.remove('hidden')" onerror="this.classList.add('hidden')">`}
+                            ${addonVal === '0' ? '<i class="fas fa-ban text-6xl text-slate-600"></i>' : `<i class="fas fa-shield-alt text-3xl text-slate-600 hidden fallback-icon"></i><img src="${imgSrc}" class="w-full h-full object-contain relative z-10" onload="this.classList.remove('hidden')" onerror="this.style.display='none'; this.previousElementSibling.classList.remove('hidden');">`}
                         </div>
                         <div class="p-4 md:p-5 border-t border-[#444] bg-[#222] flex-1 flex items-center justify-center">
                             <p class="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-300 text-center group-hover:text-[#8EDB43] transition-colors leading-snug">${addonText}</p>
@@ -2965,7 +2980,7 @@
                     <div class="md:col-span-6 flex flex-col justify-center items-center">
             `;
             
-            // Schematic / Hero View fallback safely to Door 
+            // Schematic / Hero View fallback safely to Door
             if (state.urlSchematic) {
                 html += `<img src="${state.urlSchematic}" class="max-h-[350px] w-full object-contain mb-4" onerror="this.onerror=null; this.src='${state.urlDoor}';">`;
             } else if (state.urlDoor) {
