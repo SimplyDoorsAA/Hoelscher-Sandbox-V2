@@ -952,6 +952,7 @@
         </div>
     </main>
 
+    <!-- Modals -->
     <div id="visualBrowserModal" class="fixed inset-0 bg-slate-900/90 z-[100] hidden flex-col justify-center items-center backdrop-blur-sm p-4 md:p-6 no-print">
         <div class="bg-[#222] w-full max-w-[1600px] h-[90vh] md:h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-[#444]">
             <div class="bg-[#1A1A1A] text-white p-4 flex justify-between items-center flex-shrink-0 border-b border-[#333]">
@@ -986,10 +987,11 @@
         <i class="fas fa-check-circle text-[#8EDB43] mr-2"></i> <span id="toast-msg">Settings Saved Successfully!</span>
     </div>
     
+    <!-- IMPORTANT: Keep database.js for structural integrity and image paths -->
+    <script src="database.js"></script>
+
     <script>
         const REPO_BASE_URL = "https://simplydoorsaa.github.io/Hoelscher-Sandbox-V2/";
-        
-        // Secure backend mapping directly to user API
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxNobSUmc_J7RQFGG__L2AT3ItDwnw8mPMEXWIvdk9tf98Df-80zK6qjxVYZwchAdpyPw/exec"; 
         
         let isInternalRequest = false;
@@ -1006,8 +1008,8 @@
 
         let quoteItems = [];
         let savedQuotes = {};
-        let currentMaterial = 'wood';
-        let currentCollection = 'Mahogany Wood';
+        let currentMaterial = 'fiberglass';
+        let currentCollection = 'Mahogany';
         let currentlySelectedModel = null;
         let currentlySelectedSidelite = null;
         let editingIndex = null;
@@ -1046,15 +1048,19 @@
                 }
             } catch (error) {
                 console.error(error);
-                showToast("Connection failed.", true);
+                // Fallback safely to Local Database if API fails
+                if (typeof defaultDBJSON !== 'undefined') {
+                    appSettings.db = JSON.parse(JSON.stringify(defaultDBJSON));
+                }
+                showToast("Offline Mode: Utilizing local cached prices.", true);
             } finally {
                 document.getElementById('global-loading').style.display = 'none';
             }
 
             loadSavedQuotesFromStorage();
 
-            if (appSettings.db.wood && Object.keys(appSettings.db.wood).length > 0) {
-                setMaterial('wood');
+            if (appSettings.db.fiberglass && Object.keys(appSettings.db.fiberglass).length > 0) {
+                setMaterial('fiberglass');
             }
             
             document.getElementById('prop-date').innerText = new Date().toISOString().split('T')[0];
@@ -1072,7 +1078,8 @@
         };
 
         function buildHierarchicalDatabase(flatData) {
-            appSettings.db = {
+            // Seed the database from database.js to preserve Fiberglass, Hardware, and Image Mapping Structure
+            appSettings.db = typeof defaultDBJSON !== 'undefined' ? JSON.parse(JSON.stringify(defaultDBJSON)) : {
                 fiberglass: { 'Smooth': [], 'Mahogany': [], 'Oak': [], 'Fir': [] }, 
                 wood: { 'Mahogany Wood': [], 'Knotty Alder Wood': [], 'Barn Doors': [] },
                 fiberglass_sidelites: [],
@@ -1086,6 +1093,7 @@
                 let partNum = (row['Part Number'] || '').toString().trim();
                 let desc = (row['Description'] || '').toString().trim();
 
+                // 1. Identify active collection section in the Excel sheet
                 if (partNum.includes('SECTION')) {
                     if (partNum.includes('MAHOGANY')) currentCollection = 'Mahogany Wood';
                     else if (partNum.includes('ALDER')) currentCollection = 'Knotty Alder Wood';
@@ -1097,15 +1105,23 @@
 
                 if (currentCollection === 'Skip' || !partNum) return;
 
+                // 2. Parse Barn Door Hardware
                 if (currentCollection === 'Hardware' || partNum.startsWith('BD')) {
-                    appSettings.db.barn_hardware.push({
-                        name: desc || partNum,
-                        list: parseFloat(row['Unfinished Slab List']) || 0,
-                        net: parseFloat(row['Unfinished Slab List_Net']) || parseFloat(row['Unfinished Slab List']) || 0
-                    });
+                    let hwName = desc || partNum;
+                    let existingHw = appSettings.db.barn_hardware.find(h => h.name.toLowerCase() === hwName.toLowerCase());
+                    let hwNet = parseFloat(row['Unfinished Slab List_Net']) || parseFloat(row['Unfinished Slab List']) || 0;
+                    let hwList = parseFloat(row['Unfinished Slab List']) || 0;
+                    
+                    if (existingHw) {
+                        existingHw.list = hwList;
+                        existingHw.net = hwNet;
+                    } else {
+                        appSettings.db.barn_hardware.push({ name: hwName, list: hwList, net: hwNet });
+                    }
                     return;
                 }
 
+                // 3. Extract dimensions from descriptions
                 let sizeCode = '';
                 let modelName = desc || partNum;
 
@@ -1124,7 +1140,18 @@
                 let targetArr = isSidelite ? appSettings.db.wood_sidelites : appSettings.db.wood[currentCollection];
                 if (!targetArr) targetArr = appSettings.db.wood['Mahogany Wood'];
 
-                let modelObj = targetArr.find(m => m.name === modelName);
+                // 4. Fuzzy Match the Excel Door to the Existing database.js Door to preserve image slugs
+                let modelObj = targetArr.find(m => m.name.toLowerCase() === modelName.toLowerCase());
+                
+                if (!modelObj) {
+                    modelObj = targetArr.find(m => {
+                        let safeM = slugify(m.name);
+                        let safeN = slugify(modelName);
+                        return safeM.includes(safeN) || safeN.includes(safeM);
+                    });
+                }
+
+                // If truly a new door not in DB, push it
                 if (!modelObj) {
                     modelObj = {
                         name: modelName,
@@ -1137,7 +1164,9 @@
                     targetArr.push(modelObj);
                 }
 
+                // 5. Inject secure pricing into the exact model
                 if (sizeCode) {
+                    if (!modelObj.sizes) modelObj.sizes = {};
                     if (!modelObj.sizes[sizeCode]) modelObj.sizes[sizeCode] = { glass: [], prices: {} };
                     const prices = modelObj.sizes[sizeCode].prices;
 
@@ -3208,7 +3237,7 @@
             }
         }
 
-        // --- NEW FUNCTIONS TO PREVENT UI CRASH ---
+        // --- PREVENTS CRASH ON SETTINGS TAB ---
         function populateEditModels() {
             const collectionSel = document.getElementById('editCollection');
             const modelSel = document.getElementById('editModel');
@@ -3232,7 +3261,6 @@
             const tbody = document.getElementById('editTableBody');
             if(!tbody) return;
             
-            // Redirects the user since the frontend no longer controls base catalog pricing
             tbody.innerHTML = `
                 <tr>
                     <td colspan="7" class="p-6 text-center text-sm font-bold text-slate-500 uppercase tracking-widest bg-slate-50">
