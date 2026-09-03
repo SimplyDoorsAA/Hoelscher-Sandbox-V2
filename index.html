@@ -895,6 +895,44 @@
             </div>
             
             <div class="border-t border-slate-200 pt-8 mt-8">
+                <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center"><i class="fas fa-list-alt text-[#8EDB43] mr-2"></i> Edit Catalog Base Prices</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 bg-slate-50 p-5 rounded-lg border border-slate-200">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Select Material & Collection</label>
+                        <select id="editCollection" onchange="populateEditModels()" class="w-full p-2.5 border border-slate-300 rounded outline-none text-sm text-slate-800 font-bold bg-white">
+                            <option value="fiberglass:Mahogany">Fiberglass - Mahogany Grain</option>
+                            <option value="fiberglass:Oak">Fiberglass - Oak Grain</option>
+                            <option value="fiberglass:Smooth">Fiberglass - Smooth Skin</option>
+                            <option value="fiberglass:Fir">Fiberglass - Fir Skin</option>
+                            <option value="wood:Mahogany Wood">Solid Wood - Mahogany</option>
+                            <option value="wood:Knotty Alder Wood">Solid Wood - Knotty Alder</option>
+                            <option value="wood:Barn Doors">Solid Wood - Barn Doors</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Select Model to Edit</label>
+                        <select id="editModel" onchange="renderEditTable()" class="w-full p-2.5 border border-slate-300 rounded outline-none text-sm text-slate-800 font-bold bg-white"></select>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto border border-slate-200 rounded-lg custom-scroll pb-2 mb-8">
+                    <table class="w-full text-sm text-left border-collapse min-w-[800px]">
+                        <thead class="bg-[#1A1A1A] text-slate-300 text-[10px] font-black uppercase tracking-widest border-b border-[#333333]">
+                            <tr>
+                                <th class="p-3 border-r border-[#333333]">Size Code</th>
+                                <th class="p-3 border-r border-[#333333] text-center">Unfinished Slab ($)</th>
+                                <th class="p-3 border-r border-[#333333] text-center">Unfinished Single ($)</th>
+                                <th class="p-3 border-r border-[#333333] text-center">Unfinished Double ($)</th>
+                                <th class="p-3 border-r border-[#333333] text-center text-[#8EDB43]">Prefinish Slab ($)</th>
+                                <th class="p-3 border-r border-[#333333] text-center text-[#8EDB43]">Prefinish Single ($)</th>
+                                <th class="p-3 text-center text-[#8EDB43]">Prefinish Double ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="editTableBody" class="bg-white"></tbody>
+                    </table>
+                </div>
+
                 <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center"><i class="fas fa-folder-open text-[#8EDB43] mr-2"></i> Manage Saved Quotes</h3>
                 <div class="bg-slate-50 border border-slate-200 rounded-lg overflow-x-auto custom-scroll pb-2">
                      <table class="w-full text-sm text-left border-collapse min-w-[600px]">
@@ -951,8 +989,8 @@
     <script>
         const REPO_BASE_URL = "https://simplydoorsaa.github.io/Hoelscher-Sandbox-V2/";
         
-        // --- API INTEGRATION ---
-        const GAS_API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL"; 
+        // Secure backend mapping directly to user API
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxNobSUmc_J7RQFGG__L2AT3ItDwnw8mPMEXWIvdk9tf98Df-80zK6qjxVYZwchAdpyPw/exec"; 
         
         let isInternalRequest = false;
 
@@ -3168,6 +3206,42 @@
                 populateEditModels();
                 renderSettingsSavedQuotes();
             }
+        }
+
+        // --- NEW FUNCTIONS TO PREVENT UI CRASH ---
+        function populateEditModels() {
+            const collectionSel = document.getElementById('editCollection');
+            const modelSel = document.getElementById('editModel');
+            if(!collectionSel || !modelSel) return;
+            
+            modelSel.innerHTML = '<option value="" disabled selected>Select Model...</option>';
+            
+            const val = collectionSel.value;
+            if(!val) return;
+            const [mat, col] = val.split(':');
+            
+            if(appSettings.db[mat] && appSettings.db[mat][col]) {
+                appSettings.db[mat][col].forEach((m, idx) => {
+                    modelSel.innerHTML += `<option value="${idx}">${m.name}</option>`;
+                });
+            }
+            document.getElementById('editTableBody').innerHTML = '';
+        }
+
+        function renderEditTable() {
+            const tbody = document.getElementById('editTableBody');
+            if(!tbody) return;
+            
+            // Redirects the user since the frontend no longer controls base catalog pricing
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="p-6 text-center text-sm font-bold text-slate-500 uppercase tracking-widest bg-slate-50">
+                        <i class="fas fa-lock text-[#8EDB43] mr-2 text-lg mb-2 block"></i>
+                        Base catalog pricing is now securely managed in the cloud.<br>
+                        Edit the master Google Sheet to push live price updates.
+                    </td>
+                </tr>
+            `;
         }
     </script>
 </body>
