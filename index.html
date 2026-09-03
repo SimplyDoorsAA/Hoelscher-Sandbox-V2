@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimplyDoors Quoting System - Sandbox V2</title>
+    <title>SimplyDoors Quoting System - Live DB V2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -129,9 +129,20 @@
         .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: #1A1A1A; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #333333; border-radius: 6px; }
+        
+        #global-loading {
+            position: fixed; inset: 0; z-index: 9999; background: rgba(30,41,59,0.9);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-[#f4f7f9] rep-view-active">
+
+    <div id="global-loading">
+        <i class="fas fa-circle-notch fa-spin text-4xl text-[#8EDB43] mb-4"></i>
+        <h2 class="text-lg font-black uppercase tracking-widest">Connecting to Pricing API...</h2>
+        <p class="text-xs text-slate-400 mt-2" id="loading-status">Authenticating access token</p>
+    </div>
 
     <nav class="bg-[#1A1A1A] text-white py-2.5 no-print sticky top-0 z-50 shadow-md shrink-0 border-b border-[#333333]">
         <div class="max-w-[1600px] w-full px-4 md:px-6 mx-auto nav-header-wrapper gap-y-2">
@@ -139,7 +150,7 @@
                 <i class="fas fa-door-open text-[#8EDB43] text-2xl"></i>
                 <div>
                     <h1 class="font-black text-xl leading-tight tracking-tight text-white">SimplyDoors</h1>
-                    <p class="text-[9px] text-[#8EDB43] tracking-[0.2em] uppercase font-bold">Sandbox V2</p>
+                    <p class="text-[9px] text-[#8EDB43] tracking-[0.2em] uppercase font-bold">Live Catalog V2</p>
                 </div>
             </div>
             
@@ -201,11 +212,11 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <button onclick="setMaterial('fiberglass')" id="mat-fiberglass" class="material-btn active p-3 border-2 rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center">
-                            <i class="fas fa-layer-group mr-2"></i> Fiberglass Entry Doors
-                        </button>
-                        <button onclick="setMaterial('wood')" id="mat-wood" class="material-btn p-3 border-2 border-slate-200 text-slate-700 rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center">
+                        <button onclick="setMaterial('wood')" id="mat-wood" class="material-btn active p-3 border-2 border-[#8EDB43] rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center">
                             <i class="fas fa-tree mr-2"></i> Solid Hardwood Doors
+                        </button>
+                        <button onclick="setMaterial('fiberglass')" id="mat-fiberglass" class="material-btn p-3 border-2 border-slate-200 text-slate-700 rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center">
+                            <i class="fas fa-layer-group mr-2"></i> Fiberglass Entry Doors
                         </button>
                     </div>
 
@@ -494,6 +505,19 @@
                 </section>
             </div>
 
+            <div id="builder-custom" style="display: none;">
+                 <section class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h2 class="text-xs font-black text-slate-800 uppercase tracking-widest mb-4">Custom Configuration</h2>
+                    <div class="grid gap-4">
+                        <input type="text" id="customTitle" placeholder="Custom Line Item Title" oninput="runQuoteEngine()" class="w-full p-3 border rounded text-sm">
+                        <textarea id="customDesc" placeholder="Item Description / Specs" oninput="runQuoteEngine()" class="w-full p-3 border rounded text-sm h-24"></textarea>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="text-xs font-bold text-slate-500">Materials Net ($)</label><input type="number" id="customMatCost" class="w-full p-3 border rounded text-sm font-mono" oninput="runQuoteEngine()"></div>
+                            <div><label class="text-xs font-bold text-slate-500">Labor Net ($)</label><input type="number" id="customLabCost" class="w-full p-3 border rounded text-sm font-mono" oninput="runQuoteEngine()"></div>
+                        </div>
+                    </div>
+                 </section>
+            </div>
         </div>
 
         <div class="w-full lg:col-span-4 lg:sticky top-[80px] flex flex-col gap-6 self-start h-auto lg:h-[calc(100vh-100px)]">
@@ -608,11 +632,9 @@
             </div>
 
             <div id="cart-container" class="hidden bg-[#1A1A1A] text-white rounded-xl shadow-xl border border-[#333333] flex-col overflow-hidden min-h-[300px] flex-1">
-                
                 <div class="p-3 bg-[#1A1A1A] text-[10px] font-black tracking-widest text-slate-400 border-b border-[#333333] shrink-0 flex justify-between items-center uppercase">
                     <span><i class="fas fa-shopping-cart mr-2 text-[#8EDB43]"></i> Quote Items (<span id="cart-count">0</span>)</span>
                 </div>
-                
                 <div id="cart-items" class="p-3 space-y-2 overflow-y-auto custom-scroll flex-1 bg-[#222222]"></div>
                 
                 <div class="p-4 bg-[#1A1A1A] border-t border-[#333333] shrink-0">
@@ -835,11 +857,6 @@
                     <h3 class="font-black text-[11px] text-slate-700 uppercase tracking-widest mb-4 flex items-center"><i class="fas fa-globe text-[#8EDB43] mr-2 text-sm"></i> Global Rates</h3>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Vendor Net Multiplier</label>
-                            <input type="number" step="0.01" id="set-multiplier" class="w-full p-2.5 border border-slate-300 rounded focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white">
-                            <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Applied to catalog prices (Default: 0.48)</p>
-                        </div>
-                        <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Sales Tax Rate (%)</label>
                             <div class="flex items-center"><input type="number" step="0.01" id="set-tax-rate" class="w-full p-2.5 border border-slate-300 rounded-l focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white"><span class="bg-slate-200 px-3 py-2.5 border border-l-0 border-slate-300 rounded-r text-sm text-slate-600 font-bold">%</span></div>
                         </div>
@@ -874,46 +891,6 @@
                             <div class="flex items-center"><span class="bg-slate-200 px-3 py-2.5 border border-r-0 border-slate-300 rounded-l text-sm text-slate-600 font-bold">$</span><input type="number" id="set-addon-grille" class="w-full p-2.5 border border-slate-300 rounded-r focus:border-[#8EDB43] outline-none font-mono text-slate-800 text-sm font-bold bg-white"></div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="border-t border-slate-200 pt-8">
-                <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center"><i class="fas fa-list-alt text-[#8EDB43] mr-2"></i> Edit Catalog Base Prices</h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 bg-slate-50 p-5 rounded-lg border border-slate-200">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Select Material & Collection</label>
-                        <select id="editCollection" onchange="populateEditModels()" class="w-full p-2.5 border border-slate-300 rounded outline-none text-sm text-slate-800 font-bold bg-white">
-                            <option value="fiberglass:Mahogany">Fiberglass - Mahogany Grain</option>
-                            <option value="fiberglass:Oak">Fiberglass - Oak Grain</option>
-                            <option value="fiberglass:Smooth">Fiberglass - Smooth Skin</option>
-                            <option value="fiberglass:Fir">Fiberglass - Fir Skin</option>
-                            <option value="wood:Mahogany Wood">Solid Wood - Mahogany</option>
-                            <option value="wood:Knotty Alder Wood">Solid Wood - Knotty Alder</option>
-                            <option value="wood:Barn Doors">Solid Wood - Barn Doors</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Select Model to Edit</label>
-                        <select id="editModel" onchange="renderEditTable()" class="w-full p-2.5 border border-slate-300 rounded outline-none text-sm text-slate-800 font-bold bg-white"></select>
-                    </div>
-                </div>
-                
-                <div class="overflow-x-auto border border-slate-200 rounded-lg custom-scroll pb-2">
-                    <table class="w-full text-sm text-left border-collapse min-w-[800px]">
-                        <thead class="bg-[#1A1A1A] text-slate-300 text-[10px] font-black uppercase tracking-widest border-b border-[#333333]">
-                            <tr>
-                                <th class="p-3 border-r border-[#333333]">Size Code</th>
-                                <th class="p-3 border-r border-[#333333] text-center">Unfinished Slab ($)</th>
-                                <th class="p-3 border-r border-[#333333] text-center">Unfinished Single ($)</th>
-                                <th class="p-3 border-r border-[#333333] text-center">Unfinished Double ($)</th>
-                                <th class="p-3 border-r border-[#333333] text-center text-[#8EDB43]">Prefinish Slab ($)</th>
-                                <th class="p-3 border-r border-[#333333] text-center text-[#8EDB43]">Prefinish Single ($)</th>
-                                <th class="p-3 text-center text-[#8EDB43]">Prefinish Double ($)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="editTableBody" class="bg-white"></tbody>
-                    </table>
                 </div>
             </div>
             
@@ -970,32 +947,35 @@
     <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-[#1A1A1A] border border-[#333333] text-white px-6 py-3 rounded shadow-2xl font-black tracking-widest uppercase transition-opacity duration-300 opacity-0 pointer-events-none z-[150] text-xs w-[90%] md:w-auto text-center">
         <i class="fas fa-check-circle text-[#8EDB43] mr-2"></i> <span id="toast-msg">Settings Saved Successfully!</span>
     </div>
-
-    <script src="database.js"></script>
     
     <script>
         const REPO_BASE_URL = "https://simplydoorsaa.github.io/Hoelscher-Sandbox-V2/";
+        
+        // --- API INTEGRATION ---
+        const GAS_API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL"; 
+        
+        let isInternalRequest = false;
 
         let appSettings = {
-            multiplier: 0.48, taxRate: 8.25, ccRate: 3.0,
+            taxRate: 8.25, ccRate: 3.0,
             labor: { std: 450, sl: 650, dbl: 800 },
             addons: { maskList: 207, grilleList: 440 },
             prehang: { sgl68: 125, sgl80: 150, dbl68: 320, dbl80: 340, jambWide: 10 },
             freight: { t1: 120, t2: 165, t3: 200, prehang: 100, margin: 0 },
-            db: null
+            db: { fiberglass: {}, wood: {}, fiberglass_sidelites: [], wood_sidelites: [], barn_hardware: [] },
+            multiplier: 1.0 
         };
 
         let quoteItems = [];
         let savedQuotes = {};
-        let currentMaterial = 'fiberglass';
-        let currentCollection = 'Mahogany';
+        let currentMaterial = 'wood';
+        let currentCollection = 'Mahogany Wood';
         let currentlySelectedModel = null;
         let currentlySelectedSidelite = null;
         let editingIndex = null;
         let currentBuilderMode = 'catalog'; 
         let isCustomerView = false;
 
-        // Visual Toggle State
         let sysLayout = 'slab'; 
         let sysSlPos = ''; 
         let sysHanding = ''; 
@@ -1006,7 +986,150 @@
             return text.toString().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
         }
 
+        window.onload = async () => {
+            loadSettings();
+            
+            const pmPin = prompt("Enter PM PIN for Wholesale Net Pricing.\nLeave blank and click OK for MSRP Client View:") || "";
+            
+            try {
+                const response = await fetch(`${GAS_API_URL}?pin=${encodeURIComponent(pmPin)}`, { 
+                    method: 'GET', 
+                    redirect: 'follow' 
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    isInternalRequest = result.internalMode;
+                    appSettings.multiplier = result.multiplier || 1.0;
+                    buildHierarchicalDatabase(result.data);
+                    showToast(isInternalRequest ? "Wholesale DB Synced." : "Retail DB Synced.");
+                } else {
+                    throw new Error("API return error.");
+                }
+            } catch (error) {
+                console.error(error);
+                showToast("Connection failed.", true);
+            } finally {
+                document.getElementById('global-loading').style.display = 'none';
+            }
+
+            loadSavedQuotesFromStorage();
+
+            if (appSettings.db.wood && Object.keys(appSettings.db.wood).length > 0) {
+                setMaterial('wood');
+            }
+            
+            document.getElementById('prop-date').innerText = new Date().toISOString().split('T')[0];
+            closeCatalogModal();
+            closeVisualBrowser();
+            selectLayout('slab');
+
+            isCustomerView = !isInternalRequest; 
+            if(isCustomerView) {
+                document.body.classList.remove('rep-view-active');
+                document.body.classList.add('customer-view-active');
+                document.getElementById('view-mode-text').innerText = "Customer View";
+                document.getElementById('view-mode-icon').className = "fas fa-eye-slash mr-2 text-slate-400";
+            }
+        };
+
+        function buildHierarchicalDatabase(flatData) {
+            appSettings.db = {
+                fiberglass: { 'Smooth': [], 'Mahogany': [], 'Oak': [], 'Fir': [] }, 
+                wood: { 'Mahogany Wood': [], 'Knotty Alder Wood': [], 'Barn Doors': [] },
+                fiberglass_sidelites: [],
+                wood_sidelites: [],
+                barn_hardware: []
+            };
+            
+            let currentCollection = 'Mahogany Wood';
+
+            flatData.forEach(row => {
+                let partNum = (row['Part Number'] || '').toString().trim();
+                let desc = (row['Description'] || '').toString().trim();
+
+                if (partNum.includes('SECTION')) {
+                    if (partNum.includes('MAHOGANY')) currentCollection = 'Mahogany Wood';
+                    else if (partNum.includes('ALDER')) currentCollection = 'Knotty Alder Wood';
+                    else if (partNum.includes('BARN DOOR HARDWARE')) currentCollection = 'Hardware';
+                    else if (partNum.includes('BARN DOORS')) currentCollection = 'Barn Doors';
+                    else if (partNum.includes('ACCESSORIES') || partNum.includes('PREHANG') || partNum.includes('JAMB')) currentCollection = 'Skip';
+                    return;
+                }
+
+                if (currentCollection === 'Skip' || !partNum) return;
+
+                if (currentCollection === 'Hardware' || partNum.startsWith('BD')) {
+                    appSettings.db.barn_hardware.push({
+                        name: desc || partNum,
+                        list: parseFloat(row['Unfinished Slab List']) || 0,
+                        net: parseFloat(row['Unfinished Slab List_Net']) || parseFloat(row['Unfinished Slab List']) || 0
+                    });
+                    return;
+                }
+
+                let sizeCode = '';
+                let modelName = desc || partNum;
+
+                const sizeMatch = modelName.match(/^(\d{4,5})\s+(.*)/);
+                if (sizeMatch) {
+                    sizeCode = sizeMatch[1];
+                    modelName = sizeMatch[2];
+                } else {
+                    const pMatch = partNum.match(/(\d{4,5})/);
+                    if (pMatch) sizeCode = pMatch[1];
+                }
+
+                modelName = modelName.replace(/ - Mahogany/ig, '').replace(/ - Knotty Alder/ig, '').replace(/ - KA/ig, '').trim();
+
+                let isSidelite = modelName.toLowerCase().includes('sidelite');
+                let targetArr = isSidelite ? appSettings.db.wood_sidelites : appSettings.db.wood[currentCollection];
+                if (!targetArr) targetArr = appSettings.db.wood['Mahogany Wood'];
+
+                let modelObj = targetArr.find(m => m.name === modelName);
+                if (!modelObj) {
+                    modelObj = {
+                        name: modelName,
+                        page: row['Catalog Page #'] || '',
+                        shaped: /arch|circle|curved/i.test(desc),
+                        speakeasy: /speakeasy/i.test(desc),
+                        barn: currentCollection === 'Barn Doors',
+                        sizes: {}
+                    };
+                    targetArr.push(modelObj);
+                }
+
+                if (sizeCode) {
+                    if (!modelObj.sizes[sizeCode]) modelObj.sizes[sizeCode] = { glass: [], prices: {} };
+                    const prices = modelObj.sizes[sizeCode].prices;
+
+                    prices.u_slab = parseFloat(row['Unfinished Slab List']) || prices.u_slab || 0;
+                    prices.u_single = parseFloat(row['Unfinished Single PH List']) || prices.u_single || 0;
+                    prices.u_double = parseFloat(row['Unfinished Double PH List']) || prices.u_double || 0;
+                    prices.p_slab = parseFloat(row['Prefinished Slab List']) || prices.p_slab || 0;
+                    prices.p_single = parseFloat(row['Prefinished Single PH List']) || prices.p_single || 0;
+                    prices.p_double = parseFloat(row['Prefinished Double PH List']) || prices.p_double || 0;
+
+                    prices.u_slab_net = parseFloat(row['Unfinished Slab List_Net']) || prices.u_slab;
+                    prices.u_single_net = parseFloat(row['Unfinished Single PH List_Net']) || prices.u_single;
+                    prices.u_double_net = parseFloat(row['Unfinished Double PH List_Net']) || prices.u_double;
+                    prices.p_slab_net = parseFloat(row['Prefinished Slab List_Net']) || prices.p_slab;
+                    prices.p_single_net = parseFloat(row['Prefinished Single PH List_Net']) || prices.p_single;
+                    prices.p_double_net = parseFloat(row['Prefinished Double PH List_Net']) || prices.p_double;
+
+                    let glass = row['Glazing'] || 'Solid Panel';
+                    if (glass !== 'N/A' && glass !== 'nan' && !modelObj.sizes[sizeCode].glass.includes(glass)) {
+                        modelObj.sizes[sizeCode].glass.push(glass);
+                    }
+                }
+            });
+        }
+
         function toggleViewMode() {
+            if (!isInternalRequest) {
+                alert("Security Lock: You did not authenticate with a PM PIN. Cannot switch to Internal Mode.");
+                return;
+            }
             isCustomerView = !isCustomerView;
             const btnText = document.getElementById('view-mode-text');
             const btnIcon = document.getElementById('view-mode-icon');
@@ -1015,39 +1138,13 @@
                 document.body.classList.add('customer-view-active');
                 btnText.innerText = "Customer View";
                 btnIcon.className = "fas fa-eye-slash mr-2 text-slate-400";
-                
-                if (document.getElementById('settings-tab').style.display === 'block') {
-                    switchTab('quote-tab');
-                }
+                if (document.getElementById('settings-tab').style.display === 'block') switchTab('quote-tab');
             } else {
                 document.body.classList.remove('customer-view-active');
                 document.body.classList.add('rep-view-active');
                 btnText.innerText = "Rep View";
                 btnIcon.className = "fas fa-eye mr-2 text-[#8EDB43]";
             }
-        }
-
-        function applyPricingPatches(db) {
-            if (!db || Object.keys(db).length === 0) return;
-            const patchPrices = (sizes) => {
-                if (!sizes) return;
-                Object.values(sizes).forEach(size => {
-                    if (!size || !size.prices) return;
-                    let p = size.prices;
-                    if(p.p_slab === 0) p.p_slab = p.u_slab + 600;
-                    if(p.p_single === 0) p.p_single = p.u_single + 1000;
-                    if(p.p_double === 0) p.p_double = p.u_double + 2000;
-                });
-            };
-            ['fiberglass', 'wood'].forEach(mat => {
-                if (db[mat]) {
-                    Object.values(db[mat]).forEach(col => {
-                        col.forEach(model => patchPrices(model.sizes));
-                    });
-                }
-            });
-            if (db.fiberglass_sidelites) db.fiberglass_sidelites.forEach(sl => patchPrices(sl.sizes));
-            if (db.wood_sidelites) db.wood_sidelites.forEach(sl => patchPrices(sl.sizes));
         }
 
         function decodeSize(code) {
@@ -1075,31 +1172,6 @@
             };
             return map[code] || { w: 36, h: 80, label: code };
         }
-
-        window.onload = () => {
-            appSettings.db = typeof defaultDBJSON !== 'undefined' ? defaultDBJSON : {
-                fiberglass: { 'Mahogany': [] },
-                wood: { 'Mahogany Wood': [] },
-                fiberglass_sidelites: [],
-                wood_sidelites: [],
-                barn_hardware: []
-            };
-            
-            loadSettings();
-            applyPricingPatches(appSettings.db); 
-            loadSavedQuotesFromStorage();
-
-            if (appSettings.db.fiberglass && Object.keys(appSettings.db.fiberglass).length > 0) {
-                setMaterial('fiberglass');
-            }
-            
-            document.getElementById('prop-date').innerText = new Date().toISOString().split('T')[0];
-            updateLaborDropdowns();
-            closeCatalogModal();
-            closeVisualBrowser();
-            
-            selectLayout('slab');
-        };
 
         function selectLayout(layout) {
             sysLayout = layout;
@@ -1136,14 +1208,12 @@
                 document.getElementById('row-handing').classList.remove('hidden');
                 document.getElementById('grid-handing-single').classList.remove('hidden');
                 document.getElementById('grid-handing-double').classList.add('hidden');
-                
                 selectHanding('lh');
                 selectSwing('in');
             } else if (layout === 'double') {
                 document.getElementById('row-handing').classList.remove('hidden');
                 document.getElementById('grid-handing-single').classList.add('hidden');
                 document.getElementById('grid-handing-double').classList.remove('hidden');
-                
                 selectHanding('lha');
                 selectSwing('in');
             }
@@ -1179,7 +1249,6 @@
                 document.getElementById('row-swing').classList.remove('hidden');
                 document.getElementById('row-jamb').classList.remove('hidden');
             }
-            
             runQuoteEngine();
         }
 
@@ -1221,39 +1290,31 @@
             if(sysLayout === 'slab') return 'Slab Only';
             if(sysLayout === 'single') return 'Single';
             if(sysLayout === 'double') return 'Double';
-            if(sysLayout === 'sidelite') {
-                return sysSlPos === 'both' ? 'Single + 2 SL' : 'Single + 1 SL';
-            }
+            if(sysLayout === 'sidelite') return sysSlPos === 'both' ? 'Single + 2 SL' : 'Single + 1 SL';
             return 'Slab Only';
         }
 
         function getDerivedDoorHanding() {
             if(sysLayout === 'slab') return 'N/A (Slab)';
-            
             let handStr = '';
             if(sysLayout === 'double') {
                 handStr = sysHanding === 'lha' ? 'Left Hand Active' : (sysHanding === 'rha' ? 'Right Hand Active' : '');
             } else {
                 handStr = sysHanding === 'lh' ? 'Left Hand (LH)' : (sysHanding === 'rh' ? 'Right Hand (RH)' : '');
             }
-            
             let swingStr = sysSwing === 'in' ? 'Inswing' : (sysSwing === 'out' ? 'Outswing' : '');
-            
             if(handStr && swingStr) return `${handStr} ${swingStr}`;
             return ''; 
         }
 
         function getSchematicFilename() {
             if (!sysSwing || !sysHanding) return '';
-            
             let swingName = sysSwing === 'out' ? 'outswing' : 'inswing';
             let handName = (sysHanding === 'lh' || sysHanding === 'lha') ? 'left' : 'right';
 
-            if (sysLayout === 'single') {
-                return `single_${swingName}_${handName}.jpg`;
-            } else if (sysLayout === 'double') {
-                return `double_${swingName}_${handName}.jpg`;
-            } else if (sysLayout === 'sidelite') {
+            if (sysLayout === 'single') return `single_${swingName}_${handName}.jpg`;
+            else if (sysLayout === 'double') return `double_${swingName}_${handName}.jpg`;
+            else if (sysLayout === 'sidelite') {
                 if (sysSlPos === 'both') return `single_2_sidelite.jpg`;
                 let slPosName = sysSlPos === 'left' ? 'left' : 'right';
                 return `single_1_sidelite_${slPosName}.jpg`;
@@ -1309,24 +1370,20 @@
                 if(sysHanding) document.getElementById(`btn-handing-${sysHanding}`).classList.add('active');
                 if(sysSwing) document.getElementById(`btn-swing-${sysSwing}`).classList.add('active');
             }
-
             applyToggleLogic();
         }
 
-        // System Core Functions below
         function loadSettings() {
             try {
                 const saved = localStorage.getItem('simplyDoorsPricingDB_v2');
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    appSettings.multiplier = parsed.multiplier ?? 0.48;
                     appSettings.taxRate = parsed.taxRate ?? 8.25;
                     appSettings.ccRate = parsed.ccRate ?? 3.0;
                     appSettings.labor = parsed.labor || appSettings.labor;
                     appSettings.addons = parsed.addons || appSettings.addons;
                     appSettings.prehang = parsed.prehang || appSettings.prehang;
                     appSettings.freight = parsed.freight || appSettings.freight;
-                    if(parsed.db && parsed.db.wood) appSettings.db = parsed.db;
                 }
             } catch(e) {
                 console.error("Storage read error, utilizing defaults:", e);
@@ -1336,7 +1393,6 @@
         }
 
         function saveSettings() {
-            appSettings.multiplier = parseFloat(document.getElementById('set-multiplier').value) || 0.48;
             appSettings.taxRate = parseFloat(document.getElementById('set-tax-rate').value) || 8.25;
             appSettings.ccRate = parseFloat(document.getElementById('set-cc-rate').value) || 3.0;
             appSettings.labor.std = parseFloat(document.getElementById('set-labor-std').value) || 0;
@@ -1364,7 +1420,6 @@
                 showToast("Storage Quota Exceeded.", true);
             }
 
-            updateLaborDropdowns();
             document.getElementById('taxRateLabel').innerText = appSettings.taxRate;
             document.getElementById('prop-tax-rate').innerText = appSettings.taxRate;
             document.getElementById('ccRateInput').value = appSettings.ccRate;
@@ -1504,9 +1559,7 @@
                 const dateStr = new Date(q.timestamp).toLocaleString();
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-slate-100 hover:bg-slate-50";
-                
                 const safeKey = encodeURIComponent(k);
-                
                 tr.innerHTML = `
                     <td class="p-3 border-r border-slate-100 font-bold text-slate-700">${k}</td>
                     <td class="p-3 border-r border-slate-100 text-slate-500 text-xs">${dateStr}</td>
@@ -1538,7 +1591,6 @@
         }
 
         function renderSettingsUI() {
-            document.getElementById('set-multiplier').value = appSettings.multiplier;
             document.getElementById('set-tax-rate').value = appSettings.taxRate;
             document.getElementById('set-cc-rate').value = appSettings.ccRate;
             document.getElementById('set-labor-std').value = appSettings.labor.std;
@@ -1627,11 +1679,11 @@
         function setMaterial(mat) {
             currentMaterial = mat;
             document.getElementById('mat-fiberglass').className = mat === 'fiberglass' 
-                ? 'material-btn active p-3 border-2 rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center'
+                ? 'material-btn active p-3 border-2 border-[#8EDB43] rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center'
                 : 'material-btn p-3 border-2 border-slate-200 text-slate-700 rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center';
             
             document.getElementById('mat-wood').className = mat === 'wood' 
-                ? 'material-btn active p-3 border-2 rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center'
+                ? 'material-btn active p-3 border-2 border-[#8EDB43] rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center'
                 : 'material-btn p-3 border-2 border-slate-200 text-slate-700 rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center';
 
             renderCollectionGrid();
@@ -2238,6 +2290,15 @@
             btn.classList.add('bg-[#8EDB43]', 'hover:bg-[#7bc236]', 'text-[#1A1A1A]');
         }
 
+        function updateLaborDropdowns() {
+            const laborSelect = document.getElementById('installLabor');
+            if(!laborSelect) return;
+            laborSelect.innerHTML = '<option value="0">None (Delivery Only)</option>';
+            laborSelect.innerHTML += `<option value="std">Standard Single Install (+$${appSettings.labor.std})</option>`;
+            laborSelect.innerHTML += `<option value="sl">Sidelites Install (+$${appSettings.labor.sl})</option>`;
+            laborSelect.innerHTML += `<option value="dbl">Double Door Install (+$${appSettings.labor.dbl})</option>`;
+        }
+
         function runQuoteEngine() {
             const addBtn = document.getElementById('addToQuoteBtn');
             const margin = parseFloat(document.getElementById('marginSlider').value) / 100;
@@ -2312,12 +2373,7 @@
                     customDesc: desc,
                     modelName: title, 
                     rawConfig: {
-                        isCustom: true,
-                        title: title,
-                        desc: desc,
-                        matCost: matCost,
-                        labCost: labCost,
-                        qty: qty
+                        isCustom: true, title: title, desc: desc, matCost: matCost, labCost: labCost, qty: qty
                     }
                 };
                 
@@ -2385,7 +2441,7 @@
                     const hwIdx = parseInt(barnHwSelect.value);
                     const hwItem = appSettings.db.barn_hardware[hwIdx];
                     if(hwItem) {
-                        addOnsNet = hwItem.list * appSettings.multiplier;
+                        addOnsNet = hwItem.net;
                         addonsDesc = hwItem.name;
                     }
                 }
@@ -2427,6 +2483,7 @@
             }
 
             let listPrice = 0;
+            let slabNet = 0;
             let prehangNet = 0;
             const alertBox = document.getElementById('prehangAlert');
             let jambDesc = '';
@@ -2435,13 +2492,16 @@
 
             if (isSlabOnly || isBarn) {
                 listPrice = isUnfinished ? pricingData.u_slab : pricingData.p_slab;
-                if (isDouble) listPrice *= 2;
+                slabNet = isUnfinished ? pricingData.u_slab_net : pricingData.p_slab_net;
+                if (isDouble) { listPrice *= 2; slabNet *= 2; }
+                
                 alertBox.style.display = 'none';
                 jambDesc = isBarn ? "N/A (Barn Door - Slab Only)" : "N/A (Slab Only - No Frame)";
             } else {
                 if (isInHouse) {
                     listPrice = pricingData.u_slab; 
-                    if (isDouble) listPrice *= 2;
+                    slabNet = pricingData.u_slab_net;
+                    if (isDouble) { listPrice *= 2; slabNet *= 2; }
                     
                     alertBox.style.display = 'block';
                     alertBox.className = "p-4 rounded border text-sm mt-4 bg-amber-50 border-amber-200 text-amber-800";
@@ -2460,6 +2520,8 @@
                 } else {
                     listPrice = isDouble ? (isUnfinished ? pricingData.u_double : pricingData.p_double) 
                                          : (isUnfinished ? pricingData.u_single : pricingData.p_single);
+                    slabNet = isDouble ? (isUnfinished ? pricingData.u_double_net : pricingData.p_double_net) 
+                                       : (isUnfinished ? pricingData.u_single_net : pricingData.p_single_net);
                     
                     alertBox.style.display = 'block';
                     if (currentMaterial === 'wood') {
@@ -2474,13 +2536,11 @@
                 }
             }
             
-            let slabNet = listPrice * appSettings.multiplier;
             let sideliteNet = 0;
             let slDesc = "";
             let slQty = 0;
             
             const matFolder = currentMaterial === 'wood' ? 'wood' : 'fiberglass';
-            
             const sideliteImgEl = document.getElementById('preview-sidelite');
             const sideliteContainer = document.getElementById('preview-container-sidelite');
             let urlSidelite = '';
@@ -2492,15 +2552,15 @@
                     const slGlass = document.getElementById('slGlass').value || 'Standard';
                     slQty = layout.includes('2 SL') ? 2 : 1;
                     
-                    let slListPrice = 0;
+                    let slNetPrice = 0;
                     if (isSlabOnly || isInHouse) {
-                         slListPrice = isUnfinished ? slData.u_slab : slData.p_slab;
+                        slNetPrice = isUnfinished ? slData.u_slab_net : slData.p_slab_net;
                     } else {
-                         slListPrice = isDouble ? (isUnfinished ? slData.u_double : slData.p_double) 
-                                                : (isUnfinished ? slData.u_single : slData.p_single);
+                        slNetPrice = isDouble ? (isUnfinished ? slData.u_double_net : slData.p_double_net) 
+                                              : (isUnfinished ? slData.u_single_net : slData.p_single_net);
                     }
                     
-                    sideliteNet = (slListPrice * slQty) * appSettings.multiplier;
+                    sideliteNet = (slNetPrice * slQty);
                     slDesc = `${slQty}x ${currentlySelectedSidelite.name} (${slSizeCode}) - ${slGlass}`;
                     
                     const safeSlName = slugify(currentlySelectedSidelite.name);
@@ -2780,7 +2840,6 @@
                 }
             });
             
-            // --- FREIGHT CALCULATION ---
             let baseFreight = 0;
             if (totalHUnits > 0 && totalHUnits <= 3) baseFreight = appSettings.freight.t1;
             else if (totalHUnits > 3 && totalHUnits <= 6) baseFreight = appSettings.freight.t2;
@@ -2797,7 +2856,6 @@
 
             const prehangFreight = totalPrehangs * appSettings.freight.prehang;
             const totalFreightNet = baseFreight + prehangFreight;
-            
             const freightMargin = (appSettings.freight.margin || 0) / 100;
             const totalFreightRetail = totalFreightNet / (1 - freightMargin);
             
@@ -2980,14 +3038,12 @@
                     <div class="md:col-span-6 flex flex-col justify-center items-center">
             `;
             
-            // Schematic / Hero View fallback safely to Door
             if (state.urlSchematic) {
                 html += `<img src="${state.urlSchematic}" class="max-h-[350px] w-full object-contain mb-4" onerror="this.onerror=null; this.src='${state.urlDoor}';">`;
             } else if (state.urlDoor) {
                 html += `<img src="${state.urlDoor}" class="max-h-[350px] w-full object-contain mb-4" onerror="this.style.display='none'">`;
             }
 
-            // Sub Swatches Grid underneath
             html += `<div class="flex justify-center flex-wrap gap-2 w-full mt-4">`;
             
             if (state.urlSchematic && state.urlDoor) {
