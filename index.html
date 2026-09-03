@@ -212,10 +212,10 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <button onclick="setMaterial('wood')" id="mat-wood" class="material-btn active p-3 border-2 border-[#8EDB43] rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center">
+                        <button onclick="setMaterial('wood')" id="mat-wood" class="material-btn p-3 border-2 border-slate-200 text-slate-700 rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center">
                             <i class="fas fa-tree mr-2"></i> Solid Hardwood Doors
                         </button>
-                        <button onclick="setMaterial('fiberglass')" id="mat-fiberglass" class="material-btn p-3 border-2 border-slate-200 text-slate-700 rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center">
+                        <button onclick="setMaterial('fiberglass')" id="mat-fiberglass" class="material-btn active p-3 border-2 border-[#8EDB43] rounded-lg text-center font-bold text-sm transition-all flex items-center justify-center">
                             <i class="fas fa-layer-group mr-2"></i> Fiberglass Entry Doors
                         </button>
                     </div>
@@ -987,7 +987,7 @@
         <i class="fas fa-check-circle text-[#8EDB43] mr-2"></i> <span id="toast-msg">Settings Saved Successfully!</span>
     </div>
     
-    <!-- IMPORTANT: Keep database.js for structural integrity and image paths -->
+    <!-- IMPORTANT: Must remain strictly linked to preserve Fiberglass schema -->
     <script src="database.js"></script>
 
     <script>
@@ -1078,7 +1078,7 @@
         };
 
         function buildHierarchicalDatabase(flatData) {
-            // Seed the database from database.js to preserve Fiberglass, Hardware, and Image Mapping Structure
+            // MERGE FIX: Start with defaultDBJSON from database.js to preserve Fiberglass Schema
             appSettings.db = typeof defaultDBJSON !== 'undefined' ? JSON.parse(JSON.stringify(defaultDBJSON)) : {
                 fiberglass: { 'Smooth': [], 'Mahogany': [], 'Oak': [], 'Fir': [] }, 
                 wood: { 'Mahogany Wood': [], 'Knotty Alder Wood': [], 'Barn Doors': [] },
@@ -1093,7 +1093,6 @@
                 let partNum = (row['Part Number'] || '').toString().trim();
                 let desc = (row['Description'] || '').toString().trim();
 
-                // 1. Identify active collection section in the Excel sheet
                 if (partNum.includes('SECTION')) {
                     if (partNum.includes('MAHOGANY')) currentCollection = 'Mahogany Wood';
                     else if (partNum.includes('ALDER')) currentCollection = 'Knotty Alder Wood';
@@ -1105,7 +1104,6 @@
 
                 if (currentCollection === 'Skip' || !partNum) return;
 
-                // 2. Parse Barn Door Hardware
                 if (currentCollection === 'Hardware' || partNum.startsWith('BD')) {
                     let hwName = desc || partNum;
                     let existingHw = appSettings.db.barn_hardware.find(h => h.name.toLowerCase() === hwName.toLowerCase());
@@ -1121,7 +1119,6 @@
                     return;
                 }
 
-                // 3. Extract dimensions from descriptions
                 let sizeCode = '';
                 let modelName = desc || partNum;
 
@@ -1140,9 +1137,8 @@
                 let targetArr = isSidelite ? appSettings.db.wood_sidelites : appSettings.db.wood[currentCollection];
                 if (!targetArr) targetArr = appSettings.db.wood['Mahogany Wood'];
 
-                // 4. Fuzzy Match the Excel Door to the Existing database.js Door to preserve image slugs
+                // FUZZY MATCH FIX: Map the Excel DB rows seamlessly to existing visual browser names
                 let modelObj = targetArr.find(m => m.name.toLowerCase() === modelName.toLowerCase());
-                
                 if (!modelObj) {
                     modelObj = targetArr.find(m => {
                         let safeM = slugify(m.name);
@@ -1151,7 +1147,6 @@
                     });
                 }
 
-                // If truly a new door not in DB, push it
                 if (!modelObj) {
                     modelObj = {
                         name: modelName,
@@ -1164,7 +1159,6 @@
                     targetArr.push(modelObj);
                 }
 
-                // 5. Inject secure pricing into the exact model
                 if (sizeCode) {
                     if (!modelObj.sizes) modelObj.sizes = {};
                     if (!modelObj.sizes[sizeCode]) modelObj.sizes[sizeCode] = { glass: [], prices: {} };
@@ -1976,7 +1970,9 @@
                     const addonVal = opt.value;
                     const addonText = opt.text.split(' (+')[0];
                     const safeAddonName = slugify(addonText);
-                    const imgSrc = addonVal === '0' ? '' : `${REPO_BASE_URL}images/${matFolder}/addons/${safeAddonName}.jpg`;
+                    
+                    // ADDON PATH FIX: Hardcoded to the 'fiberglass' directory to match your GitHub structure
+                    const imgSrc = addonVal === '0' ? '' : `${REPO_BASE_URL}images/fiberglass/addons/${safeAddonName}.jpg`;
                     
                     const card = document.createElement('div');
                     card.className = "bg-[#222] border border-[#444] rounded-xl overflow-hidden cursor-pointer hover:border-[#8EDB43] hover:shadow-[0_0_15px_rgba(142,219,67,0.2)] transition-all group flex flex-col";
